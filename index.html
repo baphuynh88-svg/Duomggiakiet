@@ -5,532 +5,518 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pro System</title>
 <style>
-:root { --main-color: #0084ff; }
+:root { --mc: #0084ff; }
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-    font-family: 'Segoe UI', Arial, sans-serif;
-    height: 100vh; overflow: hidden;
-    background: #000; color: #fff;
+body { font-family: 'Segoe UI', Arial, sans-serif; height: 100vh; overflow: hidden; background: #000; color: #fff; }
+
+#bg {
+  position: fixed; inset: 0; z-index: 0;
+  background: url('https://i.postimg.cc/9068tQMM/blackhole.jpg') center/cover;
+  transition: .4s;
 }
 
-/* BG */
-.app-bg {
-    position: fixed; inset: 0; z-index: -1;
-    background: url('https://i.postimg.cc/9068tQMM/blackhole.jpg') center/cover no-repeat;
-    transition: .4s;
+/* ---- AUTH ---- */
+#auth {
+  position: relative; z-index: 10;
+  height: 100vh; display: flex; justify-content: center; align-items: center;
 }
+.abox {
+  background: rgba(0,0,0,.83); backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,.13); border-radius: 22px;
+  padding: 34px 28px; width: 310px; text-align: center;
+}
+.abox h2 { font-size: 20px; margin-bottom: 20px; }
+.ainp {
+  display: block; width: 100%; padding: 12px 14px; margin: 8px 0;
+  background: rgba(255,255,255,.11); border: none; border-radius: 9px;
+  color: #fff; font-size: 15px; outline: none;
+}
+.ainp::placeholder { color: rgba(255,255,255,.4); }
+.abtn {
+  width: 100%; padding: 13px; margin-top: 10px; border: none; border-radius: 9px;
+  background: linear-gradient(45deg,#ff8c00,#ff4500);
+  color: #fff; font-size: 15px; font-weight: bold; cursor: pointer;
+}
+.alink { display: block; margin-top: 14px; font-size: 12px; }
+.alink a { color: #ffae42; text-decoration: none; }
 
-/* ── AUTH ── */
-#authScreen {
-    height: 100vh; display: flex;
-    justify-content: center; align-items: center;
-}
-.auth-box {
-    background: rgba(0,0,0,.82); backdrop-filter: blur(20px);
-    border: 1px solid rgba(255,255,255,.13);
-    border-radius: 22px; padding: 34px 28px;
-    width: 310px; text-align: center;
-}
-.auth-box h2 { font-size: 20px; margin-bottom: 20px; letter-spacing: 1px; }
-.auth-input {
-    display: block; width: 100%;
-    padding: 12px 14px; margin: 8px 0;
-    background: rgba(255,255,255,.1); border: none;
-    border-radius: 9px; color: #fff; font-size: 15px; outline: none;
-}
-.auth-input::placeholder { color: rgba(255,255,255,.4); }
-.btn-confirm {
-    width: 100%; padding: 13px; margin-top: 10px;
-    background: linear-gradient(45deg,#ff8c00,#ff4500);
-    border: none; border-radius: 9px;
-    color: #fff; font-size: 15px; font-weight: bold; cursor: pointer;
-}
-.auth-link { display: block; margin-top: 14px; font-size: 12px; }
-.auth-link a { color: #ffae42; text-decoration: none; }
+/* ---- MAIN ---- */
+#app { position: relative; z-index: 10; height: 100vh; display: flex; flex-direction: column; }
 
-/* ── MAIN APP ── */
-#mainApp { height: 100vh; display: flex; flex-direction: column; }
-
-.header {
-    background: var(--main-color); color: #fff;
-    display: flex; align-items: center; gap: 12px;
-    padding: 12px 15px; font-size: 16px; font-weight: bold;
-    min-height: 50px; flex-shrink: 0;
+.hdr {
+  background: var(--mc); color: #fff;
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 15px; font-size: 16px; font-weight: bold;
+  min-height: 50px; flex-shrink: 0;
 }
-.back-btn { font-size: 22px; cursor: pointer; user-select: none; }
+.hdr-back { font-size: 22px; cursor: pointer; user-select: none; }
 
-.scroll-area {
-    flex: 1; overflow-y: auto;
-    padding: 14px 14px 90px;
+.scr {
+  flex: 1; overflow-y: auto;
+  padding: 14px 14px 80px;
 }
-.scroll-area::-webkit-scrollbar { width: 3px; }
-.scroll-area::-webkit-scrollbar-thumb { background: rgba(0,0,0,.2); border-radius: 3px; }
 
 .card {
-    background: #fff; color: #333;
-    border-radius: 14px; padding: 18px;
-    margin-bottom: 14px;
-    box-shadow: 0 4px 20px rgba(0,0,0,.4);
-}
-.card h3 { margin-bottom: 12px; }
-
-/* Profile */
-.profile-pic {
-    width: 96px; height: 96px; border-radius: 50%;
-    border: 3px solid var(--main-color);
-    object-fit: cover; display: block;
-    margin: 0 auto 8px; cursor: pointer; background: #222;
-}
-.profile-name { text-align: center; font-size: 18px; font-weight: bold; margin-bottom: 4px; }
-.profile-sub  { text-align: center; font-size: 11px; color: #aaa; }
-
-/* Section label */
-.sec-label {
-    display: block; font-size: 11px; font-weight: bold;
-    text-transform: uppercase; letter-spacing: 1px;
-    color: #999; margin: 14px 0 7px;
+  background: #fff; color: #333; border-radius: 14px;
+  padding: 18px; margin-bottom: 14px;
+  box-shadow: 0 4px 20px rgba(0,0,0,.4);
 }
 
-/* Buttons */
-.btn-full {
-    display: block; width: 100%; padding: 12px;
-    border: none; border-radius: 9px;
-    color: #fff; font-size: 14px; font-weight: bold;
-    cursor: pointer; margin-top: 8px;
-}
-.btn-orange { background: #ff5500; }
-.btn-green  { background: #28a745; }
-.btn-gray   { background: #777; }
-
-.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-top: 2px; }
-.btn-color {
-    padding: 11px; border: none; border-radius: 8px;
-    color: #fff; font-size: 12px; font-weight: bold; cursor: pointer;
+.mrow {
+  background: #fff; color: #333; border: 2px solid #111;
+  border-radius: 12px; padding: 16px 18px; margin-bottom: 10px;
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 15px; font-weight: bold; cursor: pointer;
 }
 
-/* Menu card */
-.menu-row {
-    background: #fff; color: #333;
-    border: 2px solid #111; border-radius: 12px;
-    padding: 16px 18px; margin-bottom: 10px;
-    display: flex; justify-content: space-between; align-items: center;
-    font-size: 15px; font-weight: bold; cursor: pointer;
+/* profile */
+.avt {
+  width: 96px; height: 96px; border-radius: 50%;
+  border: 3px solid var(--mc); object-fit: cover;
+  display: block; margin: 0 auto 8px; cursor: pointer; background: #222;
+}
+.slbl {
+  display: block; font-size: 11px; font-weight: bold;
+  text-transform: uppercase; letter-spacing: 1px;
+  color: #999; margin: 14px 0 7px;
+}
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-top: 4px; }
+.cbtn { padding: 11px; border: none; border-radius: 8px; color: #fff; font-size: 12px; font-weight: bold; cursor: pointer; }
+.fbtn {
+  display: block; width: 100%; padding: 12px; border: none; border-radius: 9px;
+  color: #fff; font-size: 14px; font-weight: bold; cursor: pointer; margin-top: 8px;
 }
 
-/* Music list */
-.song-row {
-    display: flex; align-items: center; gap: 8px;
-    padding: 10px; border-radius: 9px;
-    background: #f6f6f6; border: 1px solid #eee;
-    margin-bottom: 7px; transition: background .15s;
+/* songs */
+.srow {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px; border-radius: 9px;
+  background: #f6f6f6; border: 1px solid #eee; margin-bottom: 7px;
 }
-.song-row.playing { background: #e3f2fd; border-color: #90caf9; }
-.song-info { flex: 1; overflow: hidden; }
-.song-name { font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.song-size { font-size: 11px; color: #aaa; }
-.btn-play {
-    background: var(--main-color); color: #fff;
-    border: none; border-radius: 7px;
-    padding: 7px 13px; font-size: 14px; font-weight: bold;
-    cursor: pointer; flex-shrink: 0;
-}
-.btn-del {
-    background: #f44; color: #fff;
-    border: none; border-radius: 7px;
-    padding: 7px 10px; font-size: 14px; font-weight: bold;
-    cursor: pointer; flex-shrink: 0;
-}
+.srow.on { background: #e3f2fd; border-color: #90caf9; }
+.sinfo { flex: 1; overflow: hidden; }
+.sname { font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ssz   { font-size: 11px; color: #aaa; }
+.pbtn { background: var(--mc); color: #fff; border: none; border-radius: 7px; padding: 7px 13px; font-size: 14px; font-weight: bold; cursor: pointer; flex-shrink: 0; }
+.dbtn { background: #f44;      color: #fff; border: none; border-radius: 7px; padding: 7px 10px; font-size: 14px; font-weight: bold; cursor: pointer; flex-shrink: 0; }
 
-/* Status */
-.status {
-    padding: 9px 12px; border-radius: 8px;
-    font-size: 13px; margin-top: 9px; display: none;
-}
-.s-ok      { background: #e8f5e9; color: #2e7d32; }
-.s-err     { background: #ffebee; color: #c62828; }
-.s-loading { background: #fff8e1; color: #e65100; }
+.stbar { padding: 9px 12px; border-radius: 8px; font-size: 13px; margin-top: 9px; display: none; }
+.st-ok { background:#e8f5e9; color:#2e7d32; }
+.st-er { background:#ffebee; color:#c62828; }
+.st-ld { background:#fff8e1; color:#e65100; }
+.nowpl { background:#e8f5e9; color:#2e7d32; padding:9px 12px; border-radius:8px; font-size:13px; margin:10px 0 4px; }
+#player { width:100%; margin-top:10px; border-radius:8px; }
 
-/* Now playing */
-.now-playing {
-    background: #e8f5e9; color: #2e7d32;
-    padding: 9px 12px; border-radius: 8px;
-    font-size: 13px; margin: 10px 0 4px;
+/* nav */
+.nav {
+  position: fixed; bottom: 0; left: 0; width: 100%;
+  height: 62px; background: #fff; border-top: 1px solid #e5e5e5;
+  display: flex; z-index: 999;
 }
-#audioPlayer { width: 100%; margin-top: 10px; border-radius: 8px; }
-
-/* Admin table */
-.admin-table { width: 100%; border-collapse: collapse; font-size: 12px; color: #333; }
-.admin-table th { background: #f0f0f0; padding: 7px; text-align: left; }
-.admin-table td { padding: 7px; }
-
-/* Bottom nav */
-.bottom-nav {
-    position: fixed; bottom: 0; left: 0; width: 100%;
-    height: 65px; background: #fff; border-top: 1px solid #e5e5e5;
-    display: flex; z-index: 999;
+.nitem {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  color: #999; cursor: pointer; font-size: 10px; font-weight: bold; gap: 2px;
 }
-.nav-item {
-    flex: 1; display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    color: #999; cursor: pointer; font-size: 10px; font-weight: bold; gap: 2px;
-}
-.nav-item.active { color: var(--main-color); }
-.nav-item svg { width: 22px; height: 22px; fill: currentColor; }
+.nitem.on { color: var(--mc); }
+.nitem svg { width: 22px; height: 22px; fill: currentColor; }
 
-.hidden { display: none !important; }
+.hide { display: none !important; }
 </style>
 </head>
 <body>
 
-<div id="appBg" class="app-bg"></div>
+<div id="bg"></div>
 
-<!-- ══════════ AUTH ══════════ -->
-<div id="authScreen">
-    <div class="auth-box">
-        <h2 id="authTitle">🔐 Hệ Thống</h2>
-        <input id="inUser" class="auth-input" type="text"     placeholder="Tài khoản">
-        <input id="inPass" class="auth-input" type="password" placeholder="Mật khẩu">
-        <button class="btn-confirm" onclick="handleAuth()">XÁC NHẬN</button>
-        <div class="auth-link">
-            <a href="#" id="authToggle" onclick="toggleMode(); return false;">Đăng ký tài khoản mới</a>
-        </div>
-    </div>
+<!-- AUTH -->
+<div id="auth">
+  <div class="abox">
+    <h2 id="atitle">🔐 Hệ Thống</h2>
+    <input id="iu" class="ainp" type="text"     placeholder="Tài khoản">
+    <input id="ip" class="ainp" type="password" placeholder="Mật khẩu">
+    <button class="abtn" id="abtn">XÁC NHẬN</button>
+    <div class="alink"><a href="#" id="atgl">Đăng ký tài khoản mới</a></div>
+  </div>
 </div>
 
-<!-- ══════════ MAIN ══════════ -->
-<div id="mainApp" class="hidden">
+<!-- APP -->
+<div id="app" class="hide">
+  <div class="hdr">
+    <span class="hdr-back" id="backBtn">←</span>
+    <span id="htitle">Trang chủ</span>
+  </div>
 
-    <div class="header">
-        <span class="back-btn" onclick="goBack()">←</span>
-        <span id="headTitle">Trang chủ</span>
+  <!-- home -->
+  <div id="v-home" class="scr">
+    <div class="card" style="text-align:center;padding:24px 18px;">
+      <div style="font-size:32px;margin-bottom:8px;">👋</div>
+      <div style="font-size:20px;font-weight:bold;margin-bottom:4px;">Xin chào!</div>
+      <div id="guser" style="color:#888;font-size:14px;"></div>
     </div>
+    <div class="mrow" id="goMusic"><span>🎵 Kho Nhạc</span><span>›</span></div>
+  </div>
 
-    <!-- Tab: Home -->
-    <div id="v-home" class="tab-view">
-        <div class="scroll-area">
-            <div class="card" style="text-align:center; padding:24px 18px;">
-                <div style="font-size:32px; margin-bottom:8px;">👋</div>
-                <div style="font-size:20px; font-weight:bold; margin-bottom:4px;">Xin chào!</div>
-                <div id="greetUser" style="color:#888; font-size:14px;"></div>
-            </div>
-            <div class="menu-row" onclick="openMusic()">
-                <span>🎵 Kho Nhạc</span><span>›</span>
-            </div>
-        </div>
+  <!-- music -->
+  <div id="v-music" class="scr hide">
+    <div class="card">
+      <h3 style="margin-bottom:12px;">🎵 Kho Nhạc</h3>
+      <input id="mname" class="ainp" style="background:#f0f0f0;color:#333;" placeholder="Tên bài (để trống = tên file)">
+      <input id="ffile" type="file" accept="audio/*" style="display:none">
+      <button class="fbtn" style="background:#ff5500;" id="pickBtn">📂 CHỌN FILE NHẠC</button>
+      <div id="stbar" class="stbar"></div>
+      <div id="nowpl" class="nowpl hide">▶️ Đang phát: <strong id="nowname"></strong></div>
+      <audio id="player" controls class="hide"></audio>
+      <div id="slist" style="margin-top:14px;"></div>
     </div>
+  </div>
 
-    <!-- Tab: Kho Nhạc -->
-    <div id="v-music" class="tab-view hidden">
-        <div class="scroll-area">
-            <div class="card">
-                <h3>🎵 Kho Nhạc</h3>
-
-                <input id="musicName" class="auth-input"
-                    style="background:#f0f0f0; color:#333;"
-                    placeholder="Tên bài (để trống = tên file)">
-
-                <input id="fileInput" type="file" accept="audio/*"
-                    style="display:none" onchange="uploadSong(this)">
-
-                <button class="btn-full btn-orange"
-                    onclick="document.getElementById('fileInput').click()">
-                    📂 CHỌN FILE NHẠC
-                </button>
-
-                <div id="uploadStatus" class="status"></div>
-
-                <div id="nowPlaying" class="now-playing hidden">
-                    ▶️ Đang phát: <strong id="nowName"></strong>
-                </div>
-                <audio id="player" controls class="hidden"></audio>
-
-                <div id="songList" style="margin-top:14px;"></div>
-            </div>
+  <!-- me -->
+  <div id="v-me" class="scr hide">
+    <div class="card">
+      <input id="afile" type="file" accept="image/*" style="display:none">
+      <img id="avt" class="avt" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23333'/%3E%3Ctext x='50' y='68' text-anchor='middle' font-size='50' fill='%23fff'%3E%F0%9F%91%A4%3C/text%3E%3C/svg%3E">
+      <div style="text-align:center;">
+        <div id="dname" style="font-size:18px;font-weight:bold;margin-bottom:2px;"></div>
+        <div style="font-size:11px;color:#aaa;margin-bottom:10px;">Nhấn ảnh để đổi avatar</div>
+        <button class="fbtn" style="background:#555;width:auto;padding:8px 24px;display:inline-block;" id="logoutBtn">Đăng xuất</button>
+      </div>
+      <div style="border-top:1px solid #eee;margin-top:16px;padding-top:4px;">
+        <span class="slbl">🎨 Màu giao diện</span>
+        <div class="g2">
+          <button class="cbtn" style="background:#8e44ad;" data-color="#8e44ad">TÍM</button>
+          <button class="cbtn" style="background:#e74c3c;" data-color="#e74c3c">ĐỎ</button>
+          <button class="cbtn" style="background:#0084ff;" data-color="#0084ff">XANH</button>
+          <button class="cbtn" style="background:#1a7a1a;" data-color="#1a7a1a">XANH LÁ</button>
         </div>
+        <span class="slbl">🖼️ Hình nền</span>
+        <input id="bfile" type="file" accept="image/*" style="display:none">
+        <button class="fbtn" style="background:#28a745;" id="bgPick">📷 TẢI ẢNH TỪ MÁY</button>
+        <div class="g2" style="margin-top:8px;">
+          <button class="cbtn" style="background:linear-gradient(135deg,#483d8b,#000);" data-bg="https://i.postimg.cc/dV8z91fW/Galaxy.jpeg">GALAXY 1</button>
+          <button class="cbtn" style="background:linear-gradient(135deg,#2f4f4f,#000);" data-bg="https://i.postimg.cc/MKLHVsBw/bd55c52a-f692-42fe-bbb9-dd3780099cbc.jpg">GALAXY 2</button>
+        </div>
+        <button class="fbtn" style="background:#888;" id="resetBg">🔄 Nền mặc định</button>
+      </div>
     </div>
-
-    <!-- Tab: Tôi -->
-    <div id="v-me" class="tab-view hidden">
-        <div class="scroll-area">
-            <div class="card">
-                <!-- Profile -->
-                <input id="avtFile" type="file" accept="image/*"
-                    style="display:none" onchange="saveImage('avt',this)">
-                <img id="userAvt" class="profile-pic"
-                    src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23333'/%3E%3Ctext x='50' y='68' text-anchor='middle' font-size='50' fill='%23fff'%3E👤%3C/text%3E%3C/svg%3E"
-                    onclick="document.getElementById('avtFile').click()">
-                <div class="profile-name" id="dispUser"></div>
-                <div class="profile-sub">Nhấn ảnh để đổi avatar</div>
-                <button class="btn-full btn-gray" style="margin-top:12px; width:auto; padding:8px 24px; display:inline-block;"
-                    onclick="if(confirm('Đăng xuất?')) location.reload()">Đăng xuất</button>
-
-                <div style="border-top:1px solid #eee; margin-top:16px; padding-top:4px;">
-                    <span class="sec-label">🎨 Màu giao diện</span>
-                    <div class="grid2">
-                        <button class="btn-color" style="background:#8e44ad" onclick="setColor('#8e44ad')">TÍM</button>
-                        <button class="btn-color" style="background:#e74c3c" onclick="setColor('#e74c3c')">ĐỎ</button>
-                        <button class="btn-color" style="background:#0084ff" onclick="setColor('#0084ff')">XANH</button>
-                        <button class="btn-color" style="background:#1a7a1a" onclick="setColor('#1a7a1a')">XANH LÁ</button>
-                    </div>
-
-                    <span class="sec-label">🖼️ Hình nền</span>
-                    <input id="bgFile" type="file" accept="image/*"
-                        style="display:none" onchange="saveImage('bg',this)">
-                    <button class="btn-full btn-green" onclick="document.getElementById('bgFile').click()">
-                        📷 TẢI ẢNH TỪ MÁY
-                    </button>
-                    <div class="grid2" style="margin-top:8px;">
-                        <button class="btn-color" style="background:linear-gradient(135deg,#483d8b,#000)"
-                            onclick="setBg('https://i.postimg.cc/dV8z91fW/Galaxy.jpeg')">GALAXY 1</button>
-                        <button class="btn-color" style="background:linear-gradient(135deg,#2f4f4f,#000)"
-                            onclick="setBg('https://i.postimg.cc/MKLHVsBw/bd55c52a-f692-42fe-bbb9-dd3780099cbc.jpg')">GALAXY 2</button>
-                    </div>
-                    <button class="btn-full btn-gray" onclick="resetBg()">🔄 Nền mặc định</button>
-                </div>
-            </div>
-
-            <!-- Admin -->
-            <div id="adminCard" class="card hidden">
-                <h4 style="color:#ff4500; margin-bottom:10px;">⚙️ Quản lý User (Admin)</h4>
-                <div style="overflow-x:auto;">
-                    <table class="admin-table">
-                        <thead><tr><th>User</th><th>Pass</th><th>Xóa</th></tr></thead>
-                        <tbody id="adminBody"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+    <div id="admcard" class="card hide">
+      <h4 style="color:#ff4500;margin-bottom:10px;">⚙️ Quản lý User (Admin)</h4>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:12px;color:#333;">
+          <thead><tr style="background:#f0f0f0;"><th style="padding:7px;text-align:left;">User</th><th style="padding:7px;text-align:left;">Pass</th><th style="padding:7px;">Xóa</th></tr></thead>
+          <tbody id="admtbl"></tbody>
+        </table>
+      </div>
     </div>
+  </div>
 
-    <!-- Bottom nav -->
-    <div class="bottom-nav">
-        <div id="nav-home" class="nav-item active" onclick="showTab('home')">
-            <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-            Main
-        </div>
-        <div id="nav-me" class="nav-item" onclick="showTab('me')">
-            <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-            Tôi
-        </div>
+  <!-- nav -->
+  <div class="nav">
+    <div class="nitem on" id="n-home">
+      <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>Main
     </div>
+    <div class="nitem" id="n-me">
+      <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>Tôi
+    </div>
+  </div>
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════
+// ─────────────────────────────────────────
 //  STATE
-// ═══════════════════════════════════════════════════
-var user = "";
-var view = "home";
-var isLogin = true;
-var db = null;
+// ─────────────────────────────────────────
+var CU   = "";      // current user
+var VIEW = "home";
+var MODE = "login"; // "login" | "register"
+var DB   = null;
 
-// ═══════════════════════════════════════════════════
+// ─────────────────────────────────────────
 //  INDEXEDDB
-// ═══════════════════════════════════════════════════
-function openDB() {
-    var req = indexedDB.open("ProSystemDB", 5);
+// ─────────────────────────────────────────
+(function openDB() {
+  var r = indexedDB.open("PSDB", 1);
+  r.onupgradeneeded = function(e) {
+    var d = e.target.result;
+    if (!d.objectStoreNames.contains("songs"))    d.createObjectStore("songs",    {keyPath:"id"});
+    if (!d.objectStoreNames.contains("settings")) d.createObjectStore("settings", {keyPath:"id"});
+    if (!d.objectStoreNames.contains("accounts")) d.createObjectStore("accounts", {keyPath:"id"});
+  };
+  r.onsuccess = function(e) { DB = e.target.result; };
+  r.onerror   = function()  { alert("Trình duyệt không hỗ trợ IndexedDB!"); };
+})();
 
-    req.onupgradeneeded = function(e) {
-        var d = e.target.result;
-        if (!d.objectStoreNames.contains("songs"))
-            d.createObjectStore("songs", { keyPath: "id" });
-        if (!d.objectStoreNames.contains("settings"))
-            d.createObjectStore("settings", { keyPath: "id" });
-    };
-
-    req.onsuccess = function(e) {
-        db = e.target.result;
-        console.log("IndexedDB OK");
-    };
-
-    req.onerror = function() {
-        console.warn("IndexedDB lỗi");
-    };
+// wrappers
+function dbPut(store, obj, cb) {
+  var tx = DB.transaction([store], "readwrite");
+  tx.objectStore(store).put(obj);
+  tx.oncomplete = function() { if (cb) cb(); };
+}
+function dbGet(store, key, cb) {
+  var tx = DB.transaction([store], "readonly");
+  tx.objectStore(store).get(key).onsuccess = function(e) { cb(e.target.result || null); };
+}
+function dbDel(store, key, cb) {
+  var tx = DB.transaction([store], "readwrite");
+  tx.objectStore(store).delete(key);
+  tx.oncomplete = function() { if (cb) cb(); };
+}
+function dbAll(store, cb) {
+  var items = [];
+  DB.transaction([store], "readonly").objectStore(store).openCursor().onsuccess = function(e) {
+    var c = e.target.result;
+    if (c) { items.push(c.value); c.continue(); }
+    else cb(items);
+  };
 }
 
-// Lưu setting vào IndexedDB (avt, bg, color)
-function dbSet(key, val) {
-    if (!db) return;
-    var tx = db.transaction(["settings"], "readwrite");
-    tx.objectStore("settings").put({ id: user + "_" + key, val: val });
+// ─────────────────────────────────────────
+//  ACCOUNTS — lưu trong IndexedDB
+// ─────────────────────────────────────────
+function getAccounts(cb) {
+  if (!DB) { cb([]); return; }
+  dbAll("accounts", cb);
+}
+function addAccount(u, p, cb) {
+  dbPut("accounts", {id: u, u: u, p: p}, cb);
 }
 
-function dbGet(key, cb) {
-    if (!db) { cb(null); return; }
-    var req = db.transaction(["settings"], "readonly")
-                .objectStore("settings")
-                .get(user + "_" + key);
-    req.onsuccess = function(e) { cb(e.target.result ? e.target.result.val : null); };
-    req.onerror   = function()  { cb(null); };
-}
-
-// ═══════════════════════════════════════════════════
-//  ACCOUNTS — localStorage (chỉ text, rất nhỏ)
-// ═══════════════════════════════════════════════════
-function getAccs() { try { return JSON.parse(localStorage.getItem("accs") || "[]"); } catch(e) { return []; } }
-function saveAccs(a){ try { localStorage.setItem("accs", JSON.stringify(a)); } catch(e) {} }
-
-// ═══════════════════════════════════════════════════
-//  AUTH
-// ═══════════════════════════════════════════════════
-function toggleMode() {
-    isLogin = !isLogin;
-    document.getElementById("authTitle").innerText   = isLogin ? "🔐 Hệ Thống" : "📝 Đăng ký";
-    document.getElementById("authToggle").innerText  = isLogin ? "Đăng ký tài khoản mới" : "← Quay lại đăng nhập";
-}
-
-function handleAuth() {
-    var u = document.getElementById("inUser").value.trim();
-    var p = document.getElementById("inPass").value.trim();
-
-    if (!u || !p) { alert("Nhập đủ tài khoản và mật khẩu!"); return; }
-
-    var accs = getAccs();
-
-    if (isLogin) {
-        var ok = (u === "admin" && p === "admin123");
-        if (!ok) {
-            for (var i = 0; i < accs.length; i++) {
-                if (accs[i].u === u && accs[i].p === p) { ok = true; break; }
-            }
-        }
-        if (ok) startApp(u);
-        else alert("❌ Sai tài khoản hoặc mật khẩu!");
-    } else {
-        if (u === "admin") { alert("Tên này không được dùng!"); return; }
-        for (var j = 0; j < accs.length; j++) {
-            if (accs[j].u === u) { alert("Tài khoản đã tồn tại!"); return; }
-        }
-        accs.push({ u: u, p: p });
-        saveAccs(accs);
-        alert("✅ Đăng ký thành công! Hãy đăng nhập.");
-        toggleMode();
-    }
-}
-
-function startApp(u) {
-    user = u;
-    document.getElementById("authScreen").classList.add("hidden");
-    document.getElementById("mainApp").classList.remove("hidden");
-    document.getElementById("dispUser").innerText  = u;
-    document.getElementById("greetUser").innerText = "Chào mừng, " + u + "!";
-
-    // Load settings từ IndexedDB
-    dbGet("color", function(c) { if (c) applyColor(c); });
-    dbGet("bg",    function(v) { if (v) applyBgDirect(v); });
-    dbGet("avt",   function(v) { if (v) document.getElementById("userAvt").src = v; });
-
-    if (u === "admin") {
-        document.getElementById("adminCard").classList.remove("hidden");
-        renderAdmin();
-    }
-
-    showTab("home");
-}
-
-document.getElementById("inPass").addEventListener("keydown", function(e) {
-    if (e.key === "Enter") handleAuth();
+// ─────────────────────────────────────────
+//  AUTH EVENTS
+// ─────────────────────────────────────────
+document.getElementById("atgl").addEventListener("click", function(e) {
+  e.preventDefault();
+  MODE = (MODE === "login") ? "register" : "login";
+  document.getElementById("atitle").innerText = (MODE === "login") ? "🔐 Hệ Thống" : "📝 Đăng ký";
+  document.getElementById("atgl").innerText   = (MODE === "login") ? "Đăng ký tài khoản mới" : "← Quay lại đăng nhập";
 });
 
-// ═══════════════════════════════════════════════════
+document.getElementById("abtn").addEventListener("click", function() {
+  var u = document.getElementById("iu").value.trim();
+  var p = document.getElementById("ip").value.trim();
+  if (!u || !p) { alert("Nhập đủ tài khoản và mật khẩu!"); return; }
+  if (!DB)      { alert("Database chưa sẵn sàng, thử lại!"); return; }
+
+  if (MODE === "login") {
+    // Admin cứng
+    if (u === "admin" && p === "admin123") { startApp(u); return; }
+    // User thường
+    dbGet("accounts", u, function(rec) {
+      if (rec && rec.p === p) startApp(u);
+      else alert("❌ Sai tài khoản hoặc mật khẩu!");
+    });
+  } else {
+    if (u === "admin") { alert("Tên này không được dùng!"); return; }
+    dbGet("accounts", u, function(rec) {
+      if (rec) { alert("Tài khoản đã tồn tại!"); return; }
+      addAccount(u, p, function() {
+        alert("✅ Đăng ký thành công! Hãy đăng nhập.");
+        MODE = "login";
+        document.getElementById("atitle").innerText = "🔐 Hệ Thống";
+        document.getElementById("atgl").innerText   = "Đăng ký tài khoản mới";
+      });
+    });
+  }
+});
+
+document.getElementById("ip").addEventListener("keydown", function(e) {
+  if (e.key === "Enter") document.getElementById("abtn").click();
+});
+
+// ─────────────────────────────────────────
+//  START APP
+// ─────────────────────────────────────────
+function startApp(u) {
+  CU = u;
+  document.getElementById("auth").classList.add("hide");
+  document.getElementById("app").classList.remove("hide");
+  document.getElementById("guser").innerText = "Chào mừng, " + u + "!";
+  document.getElementById("dname").innerText = u;
+
+  // load settings
+  dbGet("settings", CU+"_color", function(r){ if(r) applyColor(r.v); });
+  dbGet("settings", CU+"_bg",    function(r){ if(r) applyBg(r.v); });
+  dbGet("settings", CU+"_avt",   function(r){ if(r) document.getElementById("avt").src = r.v; });
+
+  if (u === "admin") {
+    document.getElementById("admcard").classList.remove("hide");
+    renderAdmin();
+  }
+  goTab("home");
+}
+
+// ─────────────────────────────────────────
 //  SETTINGS
-// ═══════════════════════════════════════════════════
-function saveImage(type, input) {
-    var file = input.files[0];
-    if (!file) return;
-    if (file.size > 3 * 1024 * 1024) { alert("Ảnh quá lớn! Chọn ảnh < 3MB."); input.value=""; return; }
-    var r = new FileReader();
-    r.onload = function(e) {
-        dbSet(type, e.target.result);
-        if (type === "avt") document.getElementById("userAvt").src = e.target.result;
-        else applyBgDirect(e.target.result);
-    };
-    r.readAsDataURL(file);
-    input.value = "";
-}
+// ─────────────────────────────────────────
+document.getElementById("logoutBtn").addEventListener("click", function() {
+  if (confirm("Đăng xuất?")) location.reload();
+});
 
-function setColor(c) { applyColor(c); dbSet("color", c); }
+document.getElementById("avt").addEventListener("click", function() {
+  document.getElementById("afile").click();
+});
+document.getElementById("afile").addEventListener("change", function() {
+  readImg(this, function(b64) {
+    document.getElementById("avt").src = b64;
+    dbPut("settings", {id: CU+"_avt", v: b64});
+  });
+});
+
+document.getElementById("bgPick").addEventListener("click", function() {
+  document.getElementById("bfile").click();
+});
+document.getElementById("bfile").addEventListener("change", function() {
+  readImg(this, function(b64) {
+    applyBg(b64);
+    dbPut("settings", {id: CU+"_bg", v: b64});
+  });
+});
+
+document.getElementById("resetBg").addEventListener("click", function() {
+  applyBg("https://i.postimg.cc/9068tQMM/blackhole.jpg");
+  dbPut("settings", {id: CU+"_bg", v: "https://i.postimg.cc/9068tQMM/blackhole.jpg"});
+});
+
+// color buttons
+document.querySelectorAll("[data-color]").forEach(function(btn) {
+  btn.addEventListener("click", function() {
+    var c = this.getAttribute("data-color");
+    applyColor(c);
+    dbPut("settings", {id: CU+"_color", v: c});
+  });
+});
+
+// bg preset buttons
+document.querySelectorAll("[data-bg]").forEach(function(btn) {
+  btn.addEventListener("click", function() {
+    var url = this.getAttribute("data-bg");
+    applyBg(url);
+    dbPut("settings", {id: CU+"_bg", v: url});
+  });
+});
+
 function applyColor(c) {
-    document.documentElement.style.setProperty("--main-color", c);
-    document.querySelector(".header").style.background = c;
+  document.documentElement.style.setProperty("--mc", c);
+  document.querySelector(".hdr").style.background = c;
+}
+function applyBg(v) {
+  document.getElementById("bg").style.backgroundImage = "url('" + v + "')";
+}
+function readImg(input, cb) {
+  var f = input.files[0];
+  if (!f) return;
+  if (f.size > 3*1024*1024) { alert("Ảnh < 3MB thôi bro!"); input.value=""; return; }
+  var r = new FileReader();
+  r.onload = function(e) { cb(e.target.result); };
+  r.readAsDataURL(f);
+  input.value = "";
 }
 
-function setBg(url) { applyBgDirect(url); dbSet("bg", url); }
-function applyBgDirect(v) {
-    document.getElementById("appBg").style.backgroundImage = "url('" + v + "')";
+// ─────────────────────────────────────────
+//  KHO NHẠC
+// ─────────────────────────────────────────
+document.getElementById("pickBtn").addEventListener("click", function() {
+  document.getElementById("ffile").click();
+});
+document.getElementById("ffile").addEventListener("change", function() {
+  var f = this.files[0];
+  if (!f) return;
+  var name = document.getElementById("mname").value.trim() || f.name;
+  setSt("⏳ Đang đọc file...", "st-ld");
+  var r = new FileReader();
+  r.onload = function(e) {
+    var id = CU + "_" + Date.now();
+    dbPut("songs", {id:id, user:CU, name:name, mime:f.type||"audio/mpeg", buf:e.target.result, size:f.size, ts:Date.now()}, function() {
+      setSt("✅ Đã lưu: " + name, "st-ok");
+      document.getElementById("mname").value = "";
+      renderSongs();
+    });
+  };
+  r.onerror = function() { setSt("❌ Đọc file thất bại!", "st-er"); };
+  r.readAsArrayBuffer(f);
+  this.value = "";
+});
+
+function renderSongs() {
+  var el = document.getElementById("slist");
+  el.innerHTML = "";
+  dbAll("songs", function(all) {
+    var songs = all.filter(function(s){ return s.user === CU; });
+    if (!songs.length) {
+      el.innerHTML = "<p style='text-align:center;color:#aaa;padding:20px 0;font-size:13px;'>Chưa có bài nào.<br>Nhấn <b>CHỌN FILE NHẠC</b> để thêm!</p>";
+      return;
+    }
+    songs.sort(function(a,b){ return b.ts - a.ts; });
+    songs.forEach(function(s) {
+      var mb  = (s.size/1024/1024).toFixed(1);
+      var div = document.createElement("div");
+      div.className = "srow";
+      div.id = "r_" + s.id;
+      div.innerHTML =
+        '<div class="sinfo"><div class="sname">🎵 ' + esc(s.name) + '</div><div class="ssz">' + mb + ' MB</div></div>' +
+        '<button class="pbtn" data-id="' + ea(s.id) + '" data-name="' + ea(s.name) + '">▶</button>' +
+        '<button class="dbtn" data-id="' + ea(s.id) + '">✕</button>';
+      el.appendChild(div);
+    });
+
+    // play buttons
+    el.querySelectorAll(".pbtn").forEach(function(btn) {
+      btn.addEventListener("click", function() {
+        playSong(this.getAttribute("data-id"), this.getAttribute("data-name"));
+      });
+    });
+    // delete buttons
+    el.querySelectorAll(".dbtn").forEach(function(btn) {
+      btn.addEventListener("click", function() {
+        delSong(this.getAttribute("data-id"));
+      });
+    });
+  });
 }
-function resetBg() {
-    applyBgDirect("https://i.postimg.cc/9068tQMM/blackhole.jpg");
-    dbSet("bg", "");
+
+function playSong(id, name) {
+  dbGet("songs", id, function(rec) {
+    if (!rec) { alert("Không tìm thấy bài!"); return; }
+    var blob = new Blob([rec.buf], {type: rec.mime||"audio/mpeg"});
+    var url  = URL.createObjectURL(blob);
+    var p    = document.getElementById("player");
+    p.src    = url;
+    p.classList.remove("hide");
+    p.play().catch(function(){});
+    document.getElementById("nowpl").classList.remove("hide");
+    document.getElementById("nowname").innerText = name;
+    document.querySelectorAll(".srow").forEach(function(r){ r.classList.remove("on"); });
+    var row = document.getElementById("r_" + id);
+    if (row) row.classList.add("on");
+  });
 }
 
-// ═══════════════════════════════════════════════════
-//  KHO NHẠC — IndexedDB ArrayBuffer
-// ═══════════════════════════════════════════════════
-function uploadSong(input) {
-    var file = input.files[0];
-    if (!file) return;
-    if (!db) { alert("IndexedDB chưa sẵn sàng, thử lại sau 1 giây!"); return; }
-
-    var name = document.getElementById("musicName").value.trim() || file.name;
-    setStatus("⏳ Đang đọc file...", "s-loading");
-
-    var r = new FileReader();
-    r.onload = function(e) {
-        var id = user + "_" + Date.now();
-        var tx = db.transaction(["songs"], "readwrite");
-        tx.objectStore("songs").put({
-            id:        id,
-            user:      user,
-            name:      name,
-            mime:      file.type || "audio/mpeg",
-            buf:       e.target.result,   // ArrayBuffer ✅
-            size:      file.size,
-            ts:        Date.now()
-        });
-        tx.oncomplete = function() {
-            setStatus("✅ Đã lưu: " + name, "s-ok");
-            document.getElementById("musicName").value = "";
-            input.value = "";
-            loadSongs();
-        };
-        tx.onerror = function(e) {
-            setStatus("❌ Lưu thất bại: " + e.target.error, "s-err");
-        };
-    };
-    r.onerror = function() { setStatus("❌ Không đọc được file!", "s-err"); };
-    r.readAsArrayBuffer(file);
+function delSong(id) {
+  if (!confirm("Xóa bài này?")) return;
+  dbDel("songs", id, function() {
+    var row = document.getElementById("r_" + id);
+    if (row && row.classList.contains("on")) {
+      var p = document.getElementById("player");
+      p.pause(); p.src = ""; p.classList.add("hide");
+      document.getElementById("nowpl").classList.add("hide");
+    }
+    renderSongs();
+  });
 }
 
-function loadSongs() {
-    if (!db) return;
-    var list = document.getElementById("songList");
-    list.innerHTML = "";
-    var songs = [];
+function setSt(msg, cls) {
+  var el = document.getElementById("stbar");
+  el.className = "stbar " + cls;
+  el.style.display = "block";
+  el.innerText = msg;
+  if (cls !== "st-ld") setTimeout(function(){ el.style.display="none"; }, 3000);
+}
 
-    db.transaction(["songs"], "readonly")
-      .objectStore("songs")
-      .openCursor()
-      .onsuccess = function(e) {
-        var cur = e.target.result;
-        if (cur) {
-            if (cur.value.user === user) songs.push(cur.value);
-            cur.continue();
-        } else {
-            // Render
-            if (!songs.length) {
-                list.innerHTML = "<p style='text-align:center;color:#aaa;padding:20px 0;font-size:13px'>Chưa có bài nào.<br>Nhấn <b>CHỌN FILE NHẠC</b> để thêm!</p>";
-                return;
-            }
-            songs.sort(function(a,b){ return b.ts - a.ts; });
-            songs.forEach(function(s) {
-                var mb  = (s.size/1024/1024).toFixed(1);
-                var row = document.createElement("div");
-                row.className = "song-row";
-                row.id = "row_" + s.id;
-                row.innerHTML =
-                    '<div class="song-info">' +
-                        '<div class="song-name">🎵 ' + esc(s.name) + '</div>' +
-                        '<div class="song-size">' + mb + ' MB</div>' +
-                    '</div>' +
-                    '<button class="btn-play" onclick="playSong(\'' + ea(s.id) + '\',\'' + ea(
+// ─────────────────────────────────────────
+//  ADMIN
+// ─────────────────────────────────────────
+function renderAdmin() {
+  dbAll("accounts", function(accs) {
+    var html = "";
+    accs.forEach(function(a) {
+      html += "<tr><td style='padding:7px;'>" + esc(a.u) + "</td><td style='padding:7px;'>" + esc(a.p) +
+              "</td><td style='padding:7px;text-align:center;'>" +
+              "<button data-del='" + ea(a.u) +
