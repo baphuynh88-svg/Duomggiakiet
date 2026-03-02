@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pro System</title>
+<style>
+:root { --main-color: #0084ff; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    height: 100vh; overflow: hidden;
+    background: #000; color: #fff;
+}
+
+/* BG */
+.app-bg {
+    position: fixed; inset: 0; z-index: -1;
+    background: url('https://i.postimg.cc/9068tQMM/blackhole.jpg') center/cover no-repeat;
+    transition: .4s;
+}
+
+/* ── AUTH ── */
+#authScreen {
+    height: 100vh; display: flex;
+    justify-content: center; align-items: center;
+}
+.auth-box {
+    background: rgba(0,0,0,.82); backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,.13);
+    border-radius: 22px; padding: 34px 28px;
+    width: 310px; text-align: center;
+}
+.auth-box h2 { font-size: 20px; margin-bottom: 20px; letter-spacing: 1px; }
+.auth-input {
+    display: block; width: 100%;
+    padding: 12px 14px; margin: 8px 0;
+    background: rgba(255,255,255,.1); border: none;
+    border-radius: 9px; color: #fff; font-size: 15px; outline: none;
+}
+.auth-input::placeholder { color: rgba(255,255,255,.4); }
+.btn-confirm {
+    width: 100%; padding: 13px; margin-top: 10px;
+    background: linear-gradient(45deg,#ff8c00,#ff4500);
+    border: none; border-radius: 9px;
+    color: #fff; font-size: 15px; font-weight: bold; cursor: pointer;
+}
+.auth-link { display: block; margin-top: 14px; font-size: 12px; }
+.auth-link a { color: #ffae42; text-decoration: none; }
+
+/* ── MAIN APP ── */
+#mainApp { height: 100vh; display: flex; flex-direction: column; }
+
+.header {
+    background: var(--main-color); color: #fff;
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 15px; font-size: 16px; font-weight: bold;
+    min-height: 50px; flex-shrink: 0;
+}
+.back-btn { font-size: 22px; cursor: pointer; user-select: none; }
+
+.scroll-area {
+    flex: 1; overflow-y: auto;
+    padding: 14px 14px 90px;
+}
+.scroll-area::-webkit-scrollbar { width: 3px; }
+.scroll-area::-webkit-scrollbar-thumb { background: rgba(0,0,0,.2); border-radius: 3px; }
+
+.card {
+    background: #fff; color: #333;
+    border-radius: 14px; padding: 18px;
+    margin-bottom: 14px;
+    box-shadow: 0 4px 20px rgba(0,0,0,.4);
+}
+.card h3 { margin-bottom: 12px; }
+
+/* Profile */
+.profile-pic {
+    width: 96px; height: 96px; border-radius: 50%;
+    border: 3px solid var(--main-color);
+    object-fit: cover; display: block;
+    margin: 0 auto 8px; cursor: pointer; background: #222;
+}
+.profile-name { text-align: center; font-size: 18px; font-weight: bold; margin-bottom: 4px; }
+.profile-sub  { text-align: center; font-size: 11px; color: #aaa; }
+
+/* Section label */
+.sec-label {
+    display: block; font-size: 11px; font-weight: bold;
+    text-transform: uppercase; letter-spacing: 1px;
+    color: #999; margin: 14px 0 7px;
+}
+
+/* Buttons */
+.btn-full {
+    display: block; width: 100%; padding: 12px;
+    border: none; border-radius: 9px;
+    color: #fff; font-size: 14px; font-weight: bold;
+    cursor: pointer; margin-top: 8px;
+}
+.btn-orange { background: #ff5500; }
+.btn-green  { background: #28a745; }
+.btn-gray   { background: #777; }
+
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-top: 2px; }
+.btn-color {
+    padding: 11px; border: none; border-radius: 8px;
+    color: #fff; font-size: 12px; font-weight: bold; cursor: pointer;
+}
+
+/* Menu card */
+.menu-row {
+    background: #fff; color: #333;
+    border: 2px solid #111; border-radius: 12px;
+    padding: 16px 18px; margin-bottom: 10px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 15px; font-weight: bold; cursor: pointer;
+}
+
+/* Music list */
+.song-row {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px; border-radius: 9px;
+    background: #f6f6f6; border: 1px solid #eee;
+    margin-bottom: 7px; transition: background .15s;
+}
+.song-row.playing { background: #e3f2fd; border-color: #90caf9; }
+.song-info { flex: 1; overflow: hidden; }
+.song-name { font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.song-size { font-size: 11px; color: #aaa; }
+.btn-play {
+    background: var(--main-color); color: #fff;
+    border: none; border-radius: 7px;
+    padding: 7px 13px; font-size: 14px; font-weight: bold;
+    cursor: pointer; flex-shrink: 0;
+}
+.btn-del {
+    background: #f44; color: #fff;
+    border: none; border-radius: 7px;
+    padding: 7px 10px; font-size: 14px; font-weight: bold;
+    cursor: pointer; flex-shrink: 0;
+}
+
+/* Status */
+.status {
+    padding: 9px 12px; border-radius: 8px;
+    font-size: 13px; margin-top: 9px; display: none;
+}
+.s-ok      { background: #e8f5e9; color: #2e7d32; }
+.s-err     { background: #ffebee; color: #c62828; }
+.s-loading { background: #fff8e1; color: #e65100; }
+
+/* Now playing */
+.now-playing {
+    background: #e8f5e9; color: #2e7d32;
+    padding: 9px 12px; border-radius: 8px;
+    font-size: 13px; margin: 10px 0 4px;
+}
+#audioPlayer { width: 100%; margin-top: 10px; border-radius: 8px; }
+
+/* Admin table */
+.admin-table { width: 100%; border-collapse: collapse; font-size: 12px; color: #333; }
+.admin-table th { background: #f0f0f0; padding: 7px; text-align: left; }
+.admin-table td { padding: 7px; }
+
+/* Bottom nav */
+.bottom-nav {
+    position: fixed; bottom: 0; left: 0; width: 100%;
+    height: 65px; background: #fff; border-top: 1px solid #e5e5e5;
+    display: flex; z-index: 999;
+}
+.nav-item {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    color: #999; cursor: pointer; font-size: 10px; font-weight: bold; gap: 2px;
+}
+.nav-item.active { color: var(--main-color); }
+.nav-item svg { width: 22px; height: 22px; fill: currentColor; }
+
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<div id="appBg" class="app-bg"></div>
+
+<!-- ══════════ AUTH ══════════ -->
+<div id="authScreen">
+    <div class="auth-box">
+        <h2 id="authTitle">🔐 Hệ Thống</h2>
+        <input id="inUser" class="auth-input" type="text"     placeholder="Tài khoản">
+        <input id="inPass" class="auth-input" type="password" placeholder="Mật khẩu">
+        <button class="btn-confirm" onclick="handleAuth()">XÁC NHẬN</button>
+        <div class="auth-link">
+            <a href="#" id="authToggle" onclick="toggleMode(); return false;">Đăng ký tài khoản mới</a>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════ MAIN ══════════ -->
+<div id="mainApp" class="hidden">
+
+    <div class="header">
+        <span class="back-btn" onclick="goBack()">←</span>
+        <span id="headTitle">Trang chủ</span>
+    </div>
+
+    <!-- Tab: Home -->
+    <div id="v-home" class="tab-view">
+        <div class="scroll-area">
+            <div class="card" style="text-align:center; padding:24px 18px;">
+                <div style="font-size:32px; margin-bottom:8px;">👋</div>
+                <div style="font-size:20px; font-weight:bold; margin-bottom:4px;">Xin chào!</div>
+                <div id="greetUser" style="color:#888; font-size:14px;"></div>
+            </div>
+            <div class="menu-row" onclick="openMusic()">
+                <span>🎵 Kho Nhạc</span><span>›</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab: Kho Nhạc -->
+    <div id="v-music" class="tab-view hidden">
+        <div class="scroll-area">
+            <div class="card">
+                <h3>🎵 Kho Nhạc</h3>
+
+                <input id="musicName" class="auth-input"
+                    style="background:#f0f0f0; color:#333;"
+                    placeholder="Tên bài (để trống = tên file)">
+
+                <input id="fileInput" type="file" accept="audio/*"
+                    style="display:none" onchange="uploadSong(this)">
+
+                <button class="btn-full btn-orange"
+                    onclick="document.getElementById('fileInput').click()">
+                    📂 CHỌN FILE NHẠC
+                </button>
+
+                <div id="uploadStatus" class="status"></div>
+
+                <div id="nowPlaying" class="now-playing hidden">
+                    ▶️ Đang phát: <strong id="nowName"></strong>
+                </div>
+                <audio id="player" controls class="hidden"></audio>
+
+                <div id="songList" style="margin-top:14px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab: Tôi -->
+    <div id="v-me" class="tab-view hidden">
+        <div class="scroll-area">
+            <div class="card">
+                <!-- Profile -->
+                <input id="avtFile" type="file" accept="image/*"
+                    style="display:none" onchange="saveImage('avt',this)">
+                <img id="userAvt" class="profile-pic"
+                    src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23333'/%3E%3Ctext x='50' y='68' text-anchor='middle' font-size='50' fill='%23fff'%3E👤%3C/text%3E%3C/svg%3E"
+                    onclick="document.getElementById('avtFile').click()">
+                <div class="profile-name" id="dispUser"></div>
+                <div class="profile-sub">Nhấn ảnh để đổi avatar</div>
+                <button class="btn-full btn-gray" style="margin-top:12px; width:auto; padding:8px 24px; display:inline-block;"
+                    onclick="if(confirm('Đăng xuất?')) location.reload()">Đăng xuất</button>
+
+                <div style="border-top:1px solid #eee; margin-top:16px; padding-top:4px;">
+                    <span class="sec-label">🎨 Màu giao diện</span>
+                    <div class="grid2">
+                        <button class="btn-color" style="background:#8e44ad" onclick="setColor('#8e44ad')">TÍM</button>
+                        <button class="btn-color" style="background:#e74c3c" onclick="setColor('#e74c3c')">ĐỎ</button>
+                        <button class="btn-color" style="background:#0084ff" onclick="setColor('#0084ff')">XANH</button>
+                        <button class="btn-color" style="background:#1a7a1a" onclick="setColor('#1a7a1a')">XANH LÁ</button>
+                    </div>
+
+                    <span class="sec-label">🖼️ Hình nền</span>
+                    <input id="bgFile" type="file" accept="image/*"
+                        style="display:none" onchange="saveImage('bg',this)">
+                    <button class="btn-full btn-green" onclick="document.getElementById('bgFile').click()">
+                        📷 TẢI ẢNH TỪ MÁY
+                    </button>
+                    <div class="grid2" style="margin-top:8px;">
+                        <button class="btn-color" style="background:linear-gradient(135deg,#483d8b,#000)"
+                            onclick="setBg('https://i.postimg.cc/dV8z91fW/Galaxy.jpeg')">GALAXY 1</button>
+                        <button class="btn-color" style="background:linear-gradient(135deg,#2f4f4f,#000)"
+                            onclick="setBg('https://i.postimg.cc/MKLHVsBw/bd55c52a-f692-42fe-bbb9-dd3780099cbc.jpg')">GALAXY 2</button>
+                    </div>
+                    <button class="btn-full btn-gray" onclick="resetBg()">🔄 Nền mặc định</button>
+                </div>
+            </div>
+
+            <!-- Admin -->
+            <div id="adminCard" class="card hidden">
+                <h4 style="color:#ff4500; margin-bottom:10px;">⚙️ Quản lý User (Admin)</h4>
+                <div style="overflow-x:auto;">
+                    <table class="admin-table">
+                        <thead><tr><th>User</th><th>Pass</th><th>Xóa</th></tr></thead>
+                        <tbody id="adminBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom nav -->
+    <div class="bottom-nav">
+        <div id="nav-home" class="nav-item active" onclick="showTab('home')">
+            <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+            Main
+        </div>
+        <div id="nav-me" class="nav-item" onclick="showTab('me')">
+            <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+            Tôi
+        </div>
+    </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════
+var user = "";
+var view = "home";
+var isLogin = true;
+var db = null;
+
+// ═══════════════════════════════════════════════════
+//  INDEXEDDB
+// ═══════════════════════════════════════════════════
+function openDB() {
+    var req = indexedDB.open("ProSystemDB", 5);
+
+    req.onupgradeneeded = function(e) {
+        var d = e.target.result;
+        if (!d.objectStoreNames.contains("songs"))
+            d.createObjectStore("songs", { keyPath: "id" });
+        if (!d.objectStoreNames.contains("settings"))
+            d.createObjectStore("settings", { keyPath: "id" });
+    };
+
+    req.onsuccess = function(e) {
+        db = e.target.result;
+        console.log("IndexedDB OK");
+    };
+
+    req.onerror = function() {
+        console.warn("IndexedDB lỗi");
+    };
+}
+
+// Lưu setting vào IndexedDB (avt, bg, color)
+function dbSet(key, val) {
+    if (!db) return;
+    var tx = db.transaction(["settings"], "readwrite");
+    tx.objectStore("settings").put({ id: user + "_" + key, val: val });
+}
+
+function dbGet(key, cb) {
+    if (!db) { cb(null); return; }
+    var req = db.transaction(["settings"], "readonly")
+                .objectStore("settings")
+                .get(user + "_" + key);
+    req.onsuccess = function(e) { cb(e.target.result ? e.target.result.val : null); };
+    req.onerror   = function()  { cb(null); };
+}
+
+// ═══════════════════════════════════════════════════
+//  ACCOUNTS — localStorage (chỉ text, rất nhỏ)
+// ═══════════════════════════════════════════════════
+function getAccs() { try { return JSON.parse(localStorage.getItem("accs") || "[]"); } catch(e) { return []; } }
+function saveAccs(a){ try { localStorage.setItem("accs", JSON.stringify(a)); } catch(e) {} }
+
+// ═══════════════════════════════════════════════════
+//  AUTH
+// ═══════════════════════════════════════════════════
+function toggleMode() {
+    isLogin = !isLogin;
+    document.getElementById("authTitle").innerText   = isLogin ? "🔐 Hệ Thống" : "📝 Đăng ký";
+    document.getElementById("authToggle").innerText  = isLogin ? "Đăng ký tài khoản mới" : "← Quay lại đăng nhập";
+}
+
+function handleAuth() {
+    var u = document.getElementById("inUser").value.trim();
+    var p = document.getElementById("inPass").value.trim();
+
+    if (!u || !p) { alert("Nhập đủ tài khoản và mật khẩu!"); return; }
+
+    var accs = getAccs();
+
+    if (isLogin) {
+        var ok = (u === "admin" && p === "admin123");
+        if (!ok) {
+            for (var i = 0; i < accs.length; i++) {
+                if (accs[i].u === u && accs[i].p === p) { ok = true; break; }
+            }
+        }
+        if (ok) startApp(u);
+        else alert("❌ Sai tài khoản hoặc mật khẩu!");
+    } else {
+        if (u === "admin") { alert("Tên này không được dùng!"); return; }
+        for (var j = 0; j < accs.length; j++) {
+            if (accs[j].u === u) { alert("Tài khoản đã tồn tại!"); return; }
+        }
+        accs.push({ u: u, p: p });
+        saveAccs(accs);
+        alert("✅ Đăng ký thành công! Hãy đăng nhập.");
+        toggleMode();
+    }
+}
+
+function startApp(u) {
+    user = u;
+    document.getElementById("authScreen").classList.add("hidden");
+    document.getElementById("mainApp").classList.remove("hidden");
+    document.getElementById("dispUser").innerText  = u;
+    document.getElementById("greetUser").innerText = "Chào mừng, " + u + "!";
+
+    // Load settings từ IndexedDB
+    dbGet("color", function(c) { if (c) applyColor(c); });
+    dbGet("bg",    function(v) { if (v) applyBgDirect(v); });
+    dbGet("avt",   function(v) { if (v) document.getElementById("userAvt").src = v; });
+
+    if (u === "admin") {
+        document.getElementById("adminCard").classList.remove("hidden");
+        renderAdmin();
+    }
+
+    showTab("home");
+}
+
+document.getElementById("inPass").addEventListener("keydown", function(e) {
+    if (e.key === "Enter") handleAuth();
+});
+
+// ═══════════════════════════════════════════════════
+//  SETTINGS
+// ═══════════════════════════════════════════════════
+function saveImage(type, input) {
+    var file = input.files[0];
+    if (!file) return;
+    if (file.size > 3 * 1024 * 1024) { alert("Ảnh quá lớn! Chọn ảnh < 3MB."); input.value=""; return; }
+    var r = new FileReader();
+    r.onload = function(e) {
+        dbSet(type, e.target.result);
+        if (type === "avt") document.getElementById("userAvt").src = e.target.result;
+        else applyBgDirect(e.target.result);
+    };
+    r.readAsDataURL(file);
+    input.value = "";
+}
+
+function setColor(c) { applyColor(c); dbSet("color", c); }
+function applyColor(c) {
+    document.documentElement.style.setProperty("--main-color", c);
+    document.querySelector(".header").style.background = c;
+}
+
+function setBg(url) { applyBgDirect(url); dbSet("bg", url); }
+function applyBgDirect(v) {
+    document.getElementById("appBg").style.backgroundImage = "url('" + v + "')";
+}
+function resetBg() {
+    applyBgDirect("https://i.postimg.cc/9068tQMM/blackhole.jpg");
+    dbSet("bg", "");
+}
+
+// ═══════════════════════════════════════════════════
+//  KHO NHẠC — IndexedDB ArrayBuffer
+// ═══════════════════════════════════════════════════
+function uploadSong(input) {
+    var file = input.files[0];
+    if (!file) return;
+    if (!db) { alert("IndexedDB chưa sẵn sàng, thử lại sau 1 giây!"); return; }
+
+    var name = document.getElementById("musicName").value.trim() || file.name;
+    setStatus("⏳ Đang đọc file...", "s-loading");
+
+    var r = new FileReader();
+    r.onload = function(e) {
+        var id = user + "_" + Date.now();
+        var tx = db.transaction(["songs"], "readwrite");
+        tx.objectStore("songs").put({
+            id:        id,
+            user:      user,
+            name:      name,
+            mime:      file.type || "audio/mpeg",
+            buf:       e.target.result,   // ArrayBuffer ✅
+            size:      file.size,
+            ts:        Date.now()
+        });
+        tx.oncomplete = function() {
+            setStatus("✅ Đã lưu: " + name, "s-ok");
+            document.getElementById("musicName").value = "";
+            input.value = "";
+            loadSongs();
+        };
+        tx.onerror = function(e) {
+            setStatus("❌ Lưu thất bại: " + e.target.error, "s-err");
+        };
+    };
+    r.onerror = function() { setStatus("❌ Không đọc được file!", "s-err"); };
+    r.readAsArrayBuffer(file);
+}
+
+function loadSongs() {
+    if (!db) return;
+    var list = document.getElementById("songList");
+    list.innerHTML = "";
+    var songs = [];
+
+    db.transaction(["songs"], "readonly")
+      .objectStore("songs")
+      .openCursor()
+      .onsuccess = function(e) {
+        var cur = e.target.result;
+        if (cur) {
+            if (cur.value.user === user) songs.push(cur.value);
+            cur.continue();
+        } else {
+            // Render
+            if (!songs.length) {
+                list.innerHTML = "<p style='text-align:center;color:#aaa;padding:20px 0;font-size:13px'>Chưa có bài nào.<br>Nhấn <b>CHỌN FILE NHẠC</b> để thêm!</p>";
+                return;
+            }
+            songs.sort(function(a,b){ return b.ts - a.ts; });
+            songs.forEach(function(s) {
+                var mb  = (s.size/1024/1024).toFixed(1);
+                var row = document.createElement("div");
+                row.className = "song-row";
+                row.id = "row_" + s.id;
+                row.innerHTML =
+                    '<div class="song-info">' +
+                        '<div class="song-name">🎵 ' + esc(s.name) + '</div>' +
+                        '<div class="song-size">' + mb + ' MB</div>' +
+                    '</div>' +
+                    '<button class="btn-play" onclick="playSong(\'' + ea(s.id) + '\',\'' + ea(
