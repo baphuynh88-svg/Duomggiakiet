@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pro System</title>
+<style>
+:root { --mc: #0084ff; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', Arial, sans-serif; height: 100vh; overflow: hidden; background: #000; color: #fff; }
+
+#bg {
+  position: fixed; inset: 0; z-index: 0;
+  background: url('https://i.postimg.cc/9068tQMM/blackhole.jpg') center/cover;
+  transition: .4s;
+}
+
+/* ---- AUTH ---- */
+#auth {
+  position: relative; z-index: 10;
+  height: 100vh; display: flex; justify-content: center; align-items: center;
+}
+.abox {
+  background: rgba(0,0,0,.83); backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,.13); border-radius: 22px;
+  padding: 34px 28px; width: 310px; text-align: center;
+}
+.abox h2 { font-size: 20px; margin-bottom: 6px; }
+.asubtitle { font-size: 12px; color: rgba(255,255,255,.5); margin-bottom: 18px; }
+.ainp-wrap { position: relative; margin: 8px 0; }
+.ainp {
+  display: block; width: 100%; padding: 12px 14px;
+  background: rgba(255,255,255,.11); border: 1.5px solid transparent; border-radius: 9px;
+  color: #fff; font-size: 15px; outline: none; transition: border .2s;
+}
+.ainp:focus { border-color: rgba(255,255,255,.35); }
+.ainp.err   { border-color: #ff5252; }
+.ainp::placeholder { color: rgba(255,255,255,.4); }
+.ainp-hint { font-size: 11px; margin: 2px 4px 0; min-height: 16px; text-align: left; }
+.hint-err  { color: #ff5252; }
+.hint-ok   { color: #69f0ae; }
+.hint-info { color: rgba(255,255,255,.45); }
+.abtn {
+  width: 100%; padding: 13px; margin-top: 12px; border: none; border-radius: 9px;
+  background: linear-gradient(45deg,#ff8c00,#ff4500);
+  color: #fff; font-size: 15px; font-weight: bold; cursor: pointer; transition: opacity .2s;
+}
+.abtn:active { opacity: .8; }
+.auth-tabs { display: flex; margin-bottom: 20px; border-radius: 10px; overflow: hidden; background: rgba(255,255,255,.08); }
+.auth-tab {
+  flex: 1; padding: 10px; border: none; background: none;
+  color: rgba(255,255,255,.5); font-size: 14px; font-weight: bold; cursor: pointer; transition: .2s;
+}
+.auth-tab.on { background: rgba(255,255,255,.15); color: #fff; }
+
+/* ---- MAIN ---- */
+#app { position: relative; z-index: 10; height: 100vh; display: flex; flex-direction: column; }
+
+.hdr {
+  background: var(--mc); color: #fff;
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 15px; font-size: 16px; font-weight: bold;
+  min-height: 50px; flex-shrink: 0;
+}
+.hdr-back { font-size: 22px; cursor: pointer; user-select: none; }
+
+.scr {
+  flex: 1; overflow-y: auto;
+  padding: 14px 14px 80px;
+}
+
+.card {
+  background: #fff; color: #333; border-radius: 14px;
+  padding: 18px; margin-bottom: 14px;
+  box-shadow: 0 4px 20px rgba(0,0,0,.4);
+}
+
+.mrow {
+  background: #fff; color: #333; border: 2px solid #111;
+  border-radius: 12px; padding: 16px 18px; margin-bottom: 10px;
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 15px; font-weight: bold; cursor: pointer;
+}
+
+/* profile */
+.avt {
+  width: 96px; height: 96px; border-radius: 50%;
+  border: 3px solid var(--mc); object-fit: cover;
+  display: block; margin: 0 auto 8px; cursor: pointer; background: #222;
+}
+.slbl {
+  display: block; font-size: 11px; font-weight: bold;
+  text-transform: uppercase; letter-spacing: 1px;
+  color: #999; margin: 14px 0 7px;
+}
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-top: 4px; }
+.cbtn { padding: 11px; border: none; border-radius: 8px; color: #fff; font-size: 12px; font-weight: bold; cursor: pointer; }
+.fbtn {
+  display: block; width: 100%; padding: 12px; border: none; border-radius: 9px;
+  color: #fff; font-size: 14px; font-weight: bold; cursor: pointer; margin-top: 8px;
+}
+
+/* songs */
+.srow {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px; border-radius: 9px;
+  background: #f6f6f6; border: 1px solid #eee; margin-bottom: 7px;
+}
+.srow.on { background: #e3f2fd; border-color: #90caf9; }
+.sinfo { flex: 1; overflow: hidden; }
+.sname { font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ssz   { font-size: 11px; color: #aaa; }
+.pbtn { background: var(--mc); color: #fff; border: none; border-radius: 7px; padding: 7px 13px; font-size: 14px; font-weight: bold; cursor: pointer; flex-shrink: 0; }
+.dbtn { background: #f44;      color: #fff; border: none; border-radius: 7px; padding: 7px 10px; font-size: 14px; font-weight: bold; cursor: pointer; flex-shrink: 0; }
+
+.stbar { padding: 9px 12px; border-radius: 8px; font-size: 13px; margin-top: 9px; display: none; }
+.st-ok { background:#e8f5e9; color:#2e7d32; }
+.st-er { background:#ffebee; color:#c62828; }
+.st-ld { background:#fff8e1; color:#e65100; }
+.nowpl { background:#e8f5e9; color:#2e7d32; padding:9px 12px; border-radius:8px; font-size:13px; margin:10px 0 4px; }
+#player { width:100%; margin-top:10px; border-radius:8px; }
+
+/* nav */
+.nav {
+  position: fixed; bottom: 0; left: 0; width: 100%;
+  height: 62px; background: #fff; border-top: 1px solid #e5e5e5;
+  display: flex; z-index: 999;
+}
+.nitem {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  color: #999; cursor: pointer; font-size: 10px; font-weight: bold; gap: 2px;
+}
+.nitem.on { color: var(--mc); }
+.nitem svg { width: 22px; height: 22px; fill: currentColor; }
+
+.hide { display: none !important; }
+
+/* ════════════════════════════════
+   ANIMATIONS
+════════════════════════════════ */
+
+/* Màn hình đăng nhập — fade + slide up */
+@keyframes authFadeIn {
+  from { opacity: 0; transform: translateY(30px) scale(.96); }
+  to   { opacity: 1; transform: translateY(0)    scale(1); }
+}
+.abox {
+  animation: authFadeIn .5s cubic-bezier(.22,.68,0,1.2) both;
+}
+
+/* Background blackhole — slow zoom in */
+@keyframes bgZoom {
+  from { transform: scale(1.08); }
+  to   { transform: scale(1); }
+}
+#bg { animation: bgZoom 1.2s ease-out both; }
+
+/* Tab switch — slide */
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(18px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-18px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.form-slide-right { animation: slideInRight .25s ease both; }
+.form-slide-left  { animation: slideInLeft  .25s ease both; }
+
+/* Nút bấm — ripple scale */
+.abtn, .fbtn, .pbtn, .dbtn, .cbtn {
+  transition: transform .15s ease, box-shadow .15s ease, opacity .15s ease;
+}
+.abtn:active, .fbtn:active {
+  transform: scale(.97);
+  box-shadow: 0 2px 8px rgba(0,0,0,.2);
+}
+.pbtn:active { transform: scale(.93); }
+.dbtn:active { transform: scale(.93); }
+.cbtn:active { transform: scale(.95); }
+
+/* Menu row tap */
+.mrow {
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.mrow:active { transform: scale(.98); box-shadow: 0 2px 12px rgba(0,0,0,.15); }
+
+/* Danh sách bài hát — fade slide in từng item */
+@keyframes songFadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.srow {
+  animation: songFadeIn .3s ease both;
+  transition: background .2s, border-color .2s, transform .15s;
+}
+.srow:active { transform: scale(.99); }
+
+/* Stagger delay cho từng bài */
+.srow:nth-child(1)  { animation-delay: .03s; }
+.srow:nth-child(2)  { animation-delay: .06s; }
+.srow:nth-child(3)  { animation-delay: .09s; }
+.srow:nth-child(4)  { animation-delay: .12s; }
+.srow:nth-child(5)  { animation-delay: .15s; }
+.srow:nth-child(6)  { animation-delay: .18s; }
+.srow:nth-child(7)  { animation-delay: .21s; }
+.srow:nth-child(8)  { animation-delay: .24s; }
+.srow:nth-child(9)  { animation-delay: .27s; }
+.srow:nth-child(10) { animation-delay: .30s; }
+
+/* Header slide down */
+@keyframes hdrSlide {
+  from { opacity: 0; transform: translateY(-100%); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hdr { animation: hdrSlide .35s ease both; }
+
+/* Nav slide up */
+@keyframes navSlide {
+  from { opacity: 0; transform: translateY(100%); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.nav { animation: navSlide .35s ease both; }
+
+/* Card fade in */
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.card {
+  animation: cardIn .35s ease both;
+  transition: box-shadow .2s;
+}
+
+/* Now playing pulse */
+@keyframes npPulse {
+  0%,100% { opacity: 1; }
+  50%      { opacity: .7; }
+}
+.nowpl { animation: npPulse 2s ease-in-out infinite; }
+
+/* Tab active indicator */
+.auth-tab { transition: background .2s, color .2s, transform .15s; }
+.auth-tab:active { transform: scale(.96); }
+
+
+/* ── WEATHER ── */
+.w-card {
+  background: linear-gradient(135deg,#1a237e,#0288d1);
+  color:#fff; border-radius:18px; padding:20px;
+  margin-bottom:14px; box-shadow:0 4px 20px rgba(0,0,0,.4);
+  animation: cardIn .35s ease both;
+}
+.w-search { display:flex; gap:8px; margin-bottom:16px; }
+.w-inp {
+  flex:1; padding:11px 14px; border:none; border-radius:9px;
+  background:rgba(255,255,255,.15); color:#fff; font-size:14px; outline:none;
+}
+.w-inp::placeholder { color:rgba(255,255,255,.5); }
+.w-btn {
+  padding:11px 16px; border:none; border-radius:9px;
+  background:rgba(255,255,255,.2); color:#fff;
+  font-size:14px; font-weight:bold; cursor:pointer;
+  transition:background .2s;
+}
+.w-btn:active { background:rgba(255,255,255,.35); }
+.w-main { text-align:center; padding:10px 0 16px; }
+.w-icon { font-size:64px; line-height:1; margin-bottom:4px; }
+.w-temp { font-size:52px; font-weight:bold; line-height:1; }
+.w-desc { font-size:16px; opacity:.85; margin-top:6px; text-transform:capitalize; }
+.w-city { font-size:13px; opacity:.6; margin-top:4px; }
+.w-grid {
+  display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:4px;
+}
+.w-item {
+  background:rgba(255,255,255,.12); border-radius:12px;
+  padding:12px; text-align:center;
+}
+.w-item-icon { font-size:22px; }
+.w-item-val  { font-size:18px; font-weight:bold; margin:2px 0; }
+.w-item-lbl  { font-size:11px; opacity:.65; }
+.w-loading   { text-align:center; padding:30px; opacity:.7; font-size:14px; }
+.w-err       { text-align:center; padding:20px; color:#ffcdd2; font-size:13px; }
+</style>
+</head>
+<body>
+
+<div id="bg"></div>
+
+<!-- AUTH -->
+<div id="auth">
+  <div class="abox">
+    <h2>🔐 Hệ Thống</h2>
+    <p class="asubtitle">Đăng nhập để tiếp tục</p>
+
+    <!-- Tab switch -->
+    <div class="auth-tabs">
+      <button class="auth-tab on" id="tab-login">Đăng nhập</button>
+      <button class="auth-tab"   id="tab-register">Đăng ký</button>
+    </div>
+
+    <!-- Form đăng nhập -->
+    <div id="form-login">
+      <div class="ainp-wrap">
+        <input id="li-u" class="ainp" type="text" placeholder="Tài khoản" autocomplete="username">
+        <div id="li-u-hint" class="ainp-hint"></div>
+      </div>
+      <div class="ainp-wrap">
+        <input id="li-p" class="ainp" type="password" placeholder="Mật khẩu" autocomplete="current-password">
+        <div id="li-p-hint" class="ainp-hint"></div>
+      </div>
+      <button class="abtn" id="btn-login">ĐĂNG NHẬP</button>
+    </div>
+
+    <!-- Form đăng ký -->
+    <div id="form-register" class="hide">
+      <div class="ainp-wrap">
+        <input id="rg-u" class="ainp" type="text" placeholder="Tài khoản" autocomplete="off">
+        <div id="rg-u-hint" class="ainp-hint hint-info">Tối đa 30 ký tự, không dấu cách</div>
+      </div>
+      <div class="ainp-wrap">
+        <input id="rg-p" class="ainp" type="password" placeholder="Mật khẩu" autocomplete="new-password">
+        <div id="rg-p-hint" class="ainp-hint hint-info">Tối thiểu 4 ký tự</div>
+      </div>
+      <div class="ainp-wrap">
+        <input id="rg-p2" class="ainp" type="password" placeholder="Nhập lại mật khẩu" autocomplete="new-password">
+        <div id="rg-p2-hint" class="ainp-hint"></div>
+      </div>
+      <button class="abtn" id="btn-register">TẠO TÀI KHOẢN</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" class="hide">
+  <div class="hdr">
+    <span class="hdr-back" id="backBtn">←</span>
+    <span id="htitle">Trang chủ</span>
+  </div>
+
+  <!-- home -->
+  <div id="v-home" class="scr">
+    <div class="card" style="text-align:center;padding:24px 18px;">
+      <div style="font-size:32px;margin-bottom:8px;">👋</div>
+      <div style="font-size:20px;font-weight:bold;margin-bottom:4px;">Xin chào!</div>
+      <div id="guser" style="color:#888;font-size:14px;"></div>
+    </div>
+    <div class="mrow" id="goMusic"><span>🎵 Kho Nhạc</span><span>›</span></div>
+  </div>
+
+  <!-- music -->
+  <div id="v-music" class="scr hide">
+    <div class="card">
+      <h3 style="margin-bottom:12px;">🎵 Kho Nhạc</h3>
+      <input id="mname" class="ainp" style="background:#f0f0f0;color:#333;" placeholder="Tên bài (để trống = tên file)">
+      <input id="ffile" type="file" accept="audio/*" style="display:none">
+      <button class="fbtn" style="background:#ff5500;" id="pickBtn">📂 CHỌN FILE NHẠC</button>
+      <div id="stbar" class="stbar"></div>
+      <div id="nowpl" class="nowpl hide">▶️ Đang phát: <strong id="nowname"></strong></div>
+      <audio id="player" controls class="hide"></audio>
+      <div id="slist" style="margin-top:14px;"></div>
+    </div>
+  </div>
+
+  <!-- me -->
+  <div id="v-me" class="scr hide">
+    <div class="card">
+      <input id="afile" type="file" accept="image/*" style="display:none">
+      <img id="avt" class="avt" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23333'/%3E%3Ctext x='50' y='68' text-anchor='middle' font-size='50' fill='%23fff'%3E%F0%9F%91%A4%3C/text%3E%3C/svg%3E">
+      <div style="text-align:center;">
+        <div id="dname" style="font-size:18px;font-weight:bold;margin-bottom:2px;"></div>
+        <div style="font-size:11px;color:#aaa;margin-bottom:10px;">Nhấn ảnh để đổi avatar</div>
+        <button class="fbtn" style="background:#555;width:auto;padding:8px 24px;display:inline-block;" id="logoutBtn">Đăng xuất</button>
+      </div>
+      <div style="border-top:1px solid #eee;margin-top:16px;padding-top:4px;">
+        <span class="slbl">🎨 Màu giao diện</span>
+        <div class="g2">
+          <button class="cbtn" style="background:#8e44ad;" data-color="#8e44ad">TÍM</button>
+          <button class="cbtn" style="background:#e74c3c;" data-color="#e74c3c">ĐỎ</button>
+          <button class="cbtn" style="background:#0084ff;" data-color="#0084ff">XANH</button>
+          <button class="cbtn" style="background:#1a7a1a;" data-color="#1a7a1a">XANH LÁ</button>
+        </div>
+        <span class="slbl">🖼️ Hình nền</span>
+        <input id="bfile" type="file" accept="image/*" style="display:none">
+        <button class="fbtn" style="background:#28a745;" id="bgPick">📷 TẢI ẢNH TỪ MÁY</button>
+        <div class="g2" style="margin-top:8px;">
+          <button class="cbtn" style="background:linear-gradient(135deg,#483d8b,#000);" data-bg="https://i.postimg.cc/dV8z91fW/Galaxy.jpeg">GALAXY 1</button>
+          <button class="cbtn" style="background:linear-gradient(135deg,#2f4f4f,#000);" data-bg="https://i.postimg.cc/MKLHVsBw/bd55c52a-f692-42fe-bbb9-dd3780099cbc.jpg">GALAXY 2</button>
+        </div>
+        <button class="fbtn" style="background:#888;" id="resetBg">🔄 Nền mặc định</button>
+      </div>
+    </div>
+    <div id="admcard" class="card hide">
+      <h4 style="color:#ff4500;margin-bottom:10px;">⚙️ Quản lý User (Admin)</h4>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:12px;color:#333;">
+          <thead><tr style="background:#f0f0f0;"><th style="padding:7px;text-align:left;">User</th><th style="padding:7px;text-align:left;">Pass</th><th style="padding:7px;">Ban</th><th style="padding:7px;">Xóa</th></tr></thead>
+          <tbody id="admtbl"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- weather view -->
+  <div id="v-weather" class="scr hide">
+    <div class="w-card">
+      <div class="w-search">
+        <input id="w-inp" class="w-inp" type="text" placeholder="Nhập tên thành phố...">
+        <button class="w-btn" id="w-search-btn">🔍</button>
+      </div>
+      <div id="w-result">
+        <div class="w-loading">Nhập tên thành phố để xem thời tiết ☁️</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- nav -->
+  <div class="nav">
+    <div class="nitem on" id="n-home">
+      <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>Main
+    </div>
+    <div class="nitem" id="n-weather">
+      <svg viewBox="0 0 24 24"><path d="M6.76 4.84l-1.8-1.79-1.41 1.41 1.79 1.79 1.42-1.41zM4 10.5H1v2h3v-2zm9-9.95h-2V3.5h2V.55zm7.45 3.91l-1.41-1.41-1.79 1.79 1.41 1.41 1.79-1.79zm-3.21 13.7l1.79 1.8 1.41-1.41-1.8-1.79-1.4 1.4zM20 10.5v2h3v-2h-3zm-8-5c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm-1 16.95h2V19.5h-2v2.95zm-7.45-3.91l1.41 1.41 1.79-1.8-1.41-1.41-1.79 1.8z"/></svg>Thời tiết
+    </div>
+    <div class="nitem" id="n-me">
+      <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>Tôi
+    </div>
+  </div>
+</div>
+
+<script type="module">
+// ERROR LOGGER — hiện lỗi thẳng trên màn hình điện thoại, không cần F12
+(function() {
+  var box = document.createElement("div");
+  box.id = "errbox";
+  box.style.cssText = "display:none;position:fixed;bottom:70px;left:0;right:0;z-index:99999;" +
+    "background:#b71c1c;color:#fff;font-size:12px;padding:10px 12px;max-height:45vh;" +
+    "overflow-y:auto;border-top:3px solid #ff1744;";
+  document.body.appendChild(box);
+
+  function logErr(msg) {
+    box.style.display = "block";
+    var d = document.createElement("div");
+    d.style.cssText = "padding:4px 0;border-bottom:1px solid rgba(255,255,255,.2);";
+    d.innerText = "❌ " + msg;
+    box.appendChild(d);
+    box.scrollTop = box.scrollHeight;
+  }
+
+  window.onerror = function(msg, src, line) {
+    logErr("Dòng " + line + ": " + msg);
+    return false;
+  };
+
+  window.addEventListener("unhandledrejection", function(e) {
+    logErr("Promise: " + (e.reason ? e.reason.message || e.reason : "unknown"));
+  });
+
+  var _ce = console.error;
+  console.error = function() {
+    logErr([].join.call(arguments, " "));
+    _ce.apply(console, arguments);
+  };
+
+  window._logErr = logErr;
+})();
+
+// ─────────────────────────────────────────
+//  STATE
+// ─────────────────────────────────────────
+var CU   = "";      // current user
+var VIEW = "home";
+var MODE = "login"; // "login" | "register"
+var DB   = null;
+
+// ─────────────────────────────────────────
+//  INDEXEDDB
+// ─────────────────────────────────────────
+function openDB() {
+  // Kiểm tra browser có hỗ trợ IndexedDB không
+  if (!window.indexedDB) {
+    window._logErr && window._logErr("Browser không có IndexedDB!");
+    document.getElementById("btn-login").disabled = false;
+    return;
+  }
+
+  var r;
+  try {
+    r = indexedDB.open("PSDB", 1);
+  } catch(e) {
+    window._logErr && window._logErr("Không mở được IndexedDB: " + e.message);
+    return;
+  }
+
+  r.onupgradeneeded = function(e) {
+    var d = e.target.result;
+    if (!d.objectStoreNames.contains("songs"))    d.createObjectStore("songs",    {keyPath:"id"});
+    if (!d.objectStoreNames.contains("settings")) d.createObjectStore("settings", {keyPath:"id"});
+    if (!d.objectStoreNames.contains("accounts")) d.createObjectStore("accounts", {keyPath:"id"});
+  };
+
+  r.onsuccess = function(e) {
+    DB = e.target.result;
+    // Hiện thông báo DB ready trên màn hình (debug)
+    var dbinfo = document.createElement("div");
+    dbinfo.style.cssText = "position:fixed;top:0;left:0;right:0;z-index:99998;background:#1b5e20;color:#fff;font-size:11px;padding:4px 10px;text-align:center;";
+    dbinfo.innerText = "✅ IndexedDB OK";
+    document.body.appendChild(dbinfo);
+    setTimeout(function(){ dbinfo.remove(); }, 2000);
+  };
+
+  r.onerror = function(e) {
+    window._logErr && window._logErr("IndexedDB error: " + e.target.error);
+  };
+
+  r.onblocked = function() {
+    window._logErr && window._logErr("IndexedDB bị blocked! Đóng tab khác rồi thử lại.");
+  };
+}
+
+// wrappers
+function dbPut(store, obj, cb) {
+  var tx = DB.transaction([store], "readwrite");
+  tx.objectStore(store).put(obj);
+  tx.oncomplete = function() { if (cb) cb(); };
+}
+function dbGet(store, key, cb) {
+  var tx = DB.transaction([store], "readonly");
+  tx.objectStore(store).get(key).onsuccess = function(e) { cb(e.target.result || null); };
+}
+function dbDel(store, key, cb) {
+  var tx = DB.transaction([store], "readwrite");
+  tx.objectStore(store).delete(key);
+  tx.oncomplete = function() { if (cb) cb(); };
+}
+function dbAll(store, cb) {
+  var items = [];
+  DB.transaction([store], "readonly").objectStore(store).openCursor().onsuccess = function(e) {
+    var c = e.target.result;
+    if (c) { items.push(c.value); c.continue(); }
+    else cb(items);
+  };
+}
+
+// ─────────────────────────────────────────
+//  FIREBASE — đồng bộ User/Ban
+// ─────────────────────────────────────────
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc, deleteDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+
+var firebaseConfig = {
+  apiKey: "AIzaSyCJyZGL1gNhQa3y12-ClLRtyppaVBIqhpQ",
+  authDomain: "mywebandsomeai.firebaseapp.com",
+  projectId: "mywebandsomeai",
+  storageBucket: "mywebandsomeai.firebasestorage.app",
+  messagingSenderId: "806162257355",
+  appId: "1:806162257355:web:b34a81fb8bc793a776524e"
+};
+
+var fbApp = initializeApp(firebaseConfig);
+var fsDB  = getFirestore(fbApp);
+
+// ── Firebase account helpers ──
+function fbGetAccount(u, cb) {
+  getDoc(doc(fsDB, "accounts", u))
+    .then(function(snap) { cb(snap.exists() ? snap.data() : null); })
+    .catch(function() { cb(null); });
+}
+function fbAddAccount(u, p, cb) {
+  setDoc(doc(fsDB, "accounts", u), {u: u, p: p, banned: false})
+    .then(function() { if(cb) cb(); })
+    .catch(function(e) { window._logErr && window._logErr("Firebase addAccount: " + e.message); });
+}
+function fbDelAccount(u, cb) {
+  deleteDoc(doc(fsDB, "accounts", u))
+    .then(function() { if(cb) cb(); })
+    .catch(function() { if(cb) cb(); });
+}
+function fbGetAllAccounts(cb) {
+  getDocs(collection(fsDB, "accounts"))
+    .then(function(snap) {
+      var arr = [];
+      snap.forEach(function(d) { arr.push(d.data()); });
+      cb(arr);
+    })
+    .catch(function() { cb([]); });
+}
+function fbBanAccount(u, banned, cb) {
+  setDoc(doc(fsDB, "accounts", u), {banned: banned}, {merge: true})
+    .then(function() { if(cb) cb(); })
+    .catch(function() { if(cb) cb(); });
+}
+
+window.onload = function() {
+// ─────────────────────────────────────────
+//  INIT — gắn tất cả event listeners sau khi DOM ready
+// ─────────────────────────────────────────
+  // ─────────────────────────────────────────
+  //  AUTH — 2 form riêng biệt
+  // ─────────────────────────────────────────
+  document.getElementById("tab-login").addEventListener("click", function() { switchTab("login"); });
+  document.getElementById("tab-register").addEventListener("click", function() { switchTab("register"); });
+
+  function switchTab(t) {
+    MODE = t;
+    var fl = document.getElementById("form-login");
+    var fr = document.getElementById("form-register");
+    var showEl  = t === "login" ? fl : fr;
+    var hideEl  = t === "login" ? fr : fl;
+    var animCls = t === "login" ? "form-slide-left" : "form-slide-right";
+    hideEl.classList.add("hide");
+    showEl.classList.remove("hide");
+    showEl.classList.remove("form-slide-left","form-slide-right");
+    void showEl.offsetWidth;
+    showEl.classList.add(animCls);
+    document.getElementById("tab-login").classList.toggle("on",    t === "login");
+    document.getElementById("tab-register").classList.toggle("on", t === "register");
+    // clear hints
+    ["li-u-hint","li-p-hint","rg-u-hint","rg-p-hint","rg-p2-hint"].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (id === "rg-u-hint") { el.className = "ainp-hint hint-info"; el.innerText = "Tối đa 30 ký tự, không dấu cách"; }
+      else if (id === "rg-p-hint") { el.className = "ainp-hint hint-info"; el.innerText = "Tối thiểu 4 ký tự"; }
+      else { el.className = "ainp-hint"; el.innerText = ""; }
+    });
+  }
+
+  function setHint(id, msg, type) {
+    var el = document.getElementById(id);
+    el.className = "ainp-hint hint-" + type;
+    el.innerText = msg;
+  }
+  function setInpErr(id, isErr) {
+    var el = document.getElementById(id);
+    if (isErr) el.classList.add("err"); else el.classList.remove("err");
+  }
+
+  // ── ĐĂNG NHẬP ──
+  document.getElementById("btn-login").addEventListener("click", function() {
+    var u = document.getElementById("li-u").value.trim();
+    var p = document.getElementById("li-p").value.trim();
+    var ok = true;
+
+    if (!u) { setHint("li-u-hint","Vui lòng nhập tài khoản","err"); setInpErr("li-u",true); ok=false; }
+    else    { setHint("li-u-hint","",""); setInpErr("li-u",false); }
+
+    if (!p) { setHint("li-p-hint","Vui lòng nhập mật khẩu","err"); setInpErr("li-p",true); ok=false; }
+    else    { setHint("li-p-hint","",""); setInpErr("li-p",false); }
+
+    if (!ok) return;
+
+    // Admin cứng — KHÔNG cần DB
+    if (u === "admin" && p === "admin123") { startApp(u); return; }
+
+    setHint("li-p-hint","⏳ Đang kiểm tra...","info");
+    fbGetAccount(u, function(rec) {
+      if (!rec) {
+        setHint("li-p-hint","Sai tài khoản hoặc mật khẩu","err");
+        setInpErr("li-u",true); setInpErr("li-p",true);
+      } else if (rec.banned) {
+        setHint("li-p-hint","⛔ Tài khoản này đã bị khóa!","err");
+        setInpErr("li-u",true); setInpErr("li-p",true);
+      } else if (rec.p === p) {
+        startApp(u);
+      } else {
+        setHint("li-p-hint","Sai tài khoản hoặc mật khẩu","err");
+        setInpErr("li-u",true); setInpErr("li-p",true);
+      }
+    });
+  });
+
+  // ── ĐĂNG KÝ ──
+  document.getElementById("btn-register").addEventListener("click", function() {
+    var u  = document.getElementById("rg-u").value.trim();
+    var p  = document.getElementById("rg-p").value;
+    var p2 = document.getElementById("rg-p2").value;
+    var ok = true;
+
+    // Validate username
+    if (!u) {
+      setHint("rg-u-hint","Vui lòng nhập tài khoản","err"); setInpErr("rg-u",true); ok=false;
+    } else if (u.length > 30) {
+      setHint("rg-u-hint","Tối đa 30 ký tự (đang: "+u.length+")","err"); setInpErr("rg-u",true); ok=false;
+    } else if (/\s/.test(u)) {
+      setHint("rg-u-hint","Không được có dấu cách","err"); setInpErr("rg-u",true); ok=false;
+    } else if (u === "admin") {
+      setHint("rg-u-hint","Tên này không được phép dùng","err"); setInpErr("rg-u",true); ok=false;
+    } else {
+      setHint("rg-u-hint","",""); setInpErr("rg-u",false);
+    }
+
+    // Validate password
+    if (!p) {
+      setHint("rg-p-hint","Vui lòng nhập mật khẩu","err"); setInpErr("rg-p",true); ok=false;
+    } else if (p.length < 4) {
+      setHint("rg-p-hint","Tối thiểu 4 ký tự","err"); setInpErr("rg-p",true); ok=false;
+    } else {
+      setHint("rg-p-hint","","ok"); setInpErr("rg-p",false);
+    }
+
+    // Validate confirm password
+    if (!p2) {
+      setHint("rg-p2-hint","Vui lòng nhập lại mật khẩu","err"); setInpErr("rg-p2",true); ok=false;
+    } else if (p2 !== p) {
+      setHint("rg-p2-hint","Mật khẩu không khớp","err"); setInpErr("rg-p2",true); ok=false;
+    } else if (p.length >= 4) {
+      setHint("rg-p2-hint","Khớp ✓","ok"); setInpErr("rg-p2",false);
+    }
+
+    if (!ok) return;
+
+    setHint("rg-u-hint","⏳ Đang kiểm tra...","info");
+    fbGetAccount(u, function(rec) {
+      if (rec) {
+        setHint("rg-u-hint","Tên tài khoản đã được sử dụng","err");
+        setInpErr("rg-u",true);
+        return;
+      }
+      fbAddAccount(u, p, function() {
+        setHint("rg-u-hint","Đăng ký thành công! Đang chuyển...","ok");
+        setTimeout(function() { switchTab("login"); }, 1000);
+      });
+    });
+  });
+
+  // Enter shortcut
+  document.getElementById("li-p").addEventListener("keydown", function(e) {
+    if (e.key === "Enter") document.getElementById("btn-login").click();
+  });
+  document.getElementById("rg-p2").addEventListener("keydown", function(e) {
+    if (e.key === "Enter") document.getElementById("btn-register").click();
+  });
+
+  // Live validate confirm password
+  document.getElementById("rg-p2").addEventListener("input", function() {
+    var p  = document.getElementById("rg-p").value;
+    var p2 = this.value;
+    if (!p2) { setHint("rg-p2-hint","",""); setInpErr("rg-p2",false); return; }
+    if (p2 === p) { setHint("rg-p2-hint","Khớp ✓","ok"); setInpErr("rg-p2",false); }
+    else          { setHint("rg-p2-hint","Mật khẩu không khớp","err"); setInpErr("rg-p2",true); }
+  });
+
+  // Live validate username length
+  document.getElementById("rg-u").addEventListener("input", function() {
+    var v = this.value.trim();
+    if (v.length > 30) { setHint("rg-u-hint","Tối đa 30 ký tự (đang: "+v.length+")","err"); setInpErr("rg-u",true); }
+    else if (v.length > 0) { setHint("rg-u-hint",v.length+"/30","info"); setInpErr("rg-u",false); }
+    else { setHint("rg-u-hint","Tối đa 30 ký tự, không dấu cách","info"); setInpErr("rg-u",false); }
+  });
+
+  // ─────────────────────────────────────────
+  //  START APP
+  // ─────────────────────────────────────────
+  function startApp(u) {
+    CU = u;
+    document.getElementById("auth").classList.add("hide");
+    document.getElementById("app").classList.remove("hide");
+    document.getElementById("guser").innerText = "Chào mừng, " + u + "!";
+    document.getElementById("dname").innerText = u;
+
+    // load settings
+    dbGet("settings", CU+"_color", function(r){ if(r) applyColor(r.v); });
+    dbGet("settings", CU+"_bg",    function(r){ if(r) applyBg(r.v); });
+    dbGet("settings", CU+"_avt",   function(r){ if(r) document.getElementById("avt").src = r.v; });
+
+    if (u === "admin") {
+      document.getElementById("admcard").classList.remove("hide");
+      renderAdmin();
+    }
+    goTab("home");
+  }
+
+  // ─────────────────────────────────────────
+  //  SETTINGS
+  // ─────────────────────────────────────────
+  document.getElementById("logoutBtn").addEventListener("click", function() {
+    if (confirm("Đăng xuất?")) location.reload();
+  });
+
+  document.getElementById("avt").addEventListener("click", function() {
+    document.getElementById("afile").click();
+  });
+  document.getElementById("afile").addEventListener("change", function() {
+    readImg(this, function(b64) {
+      document.getElementById("avt").src = b64;
+      dbPut("settings", {id: CU+"_avt", v: b64});
+    });
+  });
+
+  document.getElementById("bgPick").addEventListener("click", function() {
+    document.getElementById("bfile").click();
+  });
+  document.getElementById("bfile").addEventListener("change", function() {
+    readImg(this, function(b64) {
+      applyBg(b64);
+      dbPut("settings", {id: CU+"_bg", v: b64});
+    });
+  });
+
+  document.getElementById("resetBg").addEventListener("click", function() {
+    applyBg("https://i.postimg.cc/9068tQMM/blackhole.jpg");
+    dbPut("settings", {id: CU+"_bg", v: "https://i.postimg.cc/9068tQMM/blackhole.jpg"});
+  });
+
+  // color buttons
+  document.querySelectorAll("[data-color]").forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      var c = this.getAttribute("data-color");
+      applyColor(c);
+      dbPut("settings", {id: CU+"_color", v: c});
+    });
+  });
+
+  // bg preset buttons
+  document.querySelectorAll("[data-bg]").forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      var url = this.getAttribute("data-bg");
+      applyBg(url);
+      dbPut("settings", {id: CU+"_bg", v: url});
+    });
+  });
+
+  function applyColor(c) {
+    document.documentElement.style.setProperty("--mc", c);
+    document.querySelector(".hdr").style.background = c;
+  }
+  function applyBg(v) {
+    document.getElementById("bg").style.backgroundImage = "url('" + v + "')";
+  }
+  function readImg(input, cb) {
+    var f = input.files[0];
+    if (!f) return;
+    if (f.size > 3*1024*1024) { alert("Ảnh < 3MB thôi bro!"); input.value=""; return; }
+    var r = new FileReader();
+    r.onload = function(e) { cb(e.target.result); };
+    r.readAsDataURL(f);
+    input.value = "";
+  }
+
+  // ─────────────────────────────────────────
+  //  KHO NHẠC
+  // ─────────────────────────────────────────
+  document.getElementById("pickBtn").addEventListener("click", function() {
+    document.getElementById("ffile").click();
+  });
+  document.getElementById("ffile").addEventListener("change", function() {
+    var f = this.files[0];
+    if (!f) return;
+    var name = document.getElementById("mname").value.trim() || f.name;
+    setSt("⏳ Đang đọc file...", "st-ld");
+    var r = new FileReader();
+    r.onload = function(e) {
+      var id = CU + "_" + Date.now();
+      dbPut("songs", {id:id, user:CU, name:name, mime:f.type||"audio/mpeg", buf:e.target.result, size:f.size, ts:Date.now()}, function() {
+        setSt("✅ Đã lưu: " + name, "st-ok");
+        document.getElementById("mname").value = "";
+        renderSongs();
+      });
+    };
+    r.onerror = function() { setSt("❌ Đọc file thất bại!", "st-er"); };
+    r.readAsArrayBuffer(f);
+    this.value = "";
+  });
+
+  function renderSongs() {
+    var el = document.getElementById("slist");
+    el.innerHTML = "";
+    dbAll("songs", function(all) {
+      var songs = all.filter(function(s){ return s.user === CU; });
+      if (!songs.length) {
+        el.innerHTML = "<p style='text-align:center;color:#aaa;padding:20px 0;font-size:13px;'>Chưa có bài nào.<br>Nhấn <b>CHỌN FILE NHẠC</b> để thêm!</p>";
+        return;
+      }
+      songs.sort(function(a,b){ return b.ts - a.ts; });
+      songs.forEach(function(s) {
+        var mb   = (s.size/1024/1024).toFixed(1);
+        var div  = document.createElement("div"); div.className = "srow"; div.id = "r_" + s.id;
+        var info = document.createElement("div"); info.className = "sinfo";
+        var nm   = document.createElement("div"); nm.className = "sname"; nm.innerText = "🎵 " + s.name;
+        var sz   = document.createElement("div"); sz.className = "ssz";   sz.innerText = mb + " MB";
+        info.appendChild(nm); info.appendChild(sz);
+        var pb = document.createElement("button"); pb.className = "pbtn"; pb.innerText = "▶";
+        var db = document.createElement("button"); db.className = "dbtn"; db.innerText = "✕";
+        (function(id, name) {
+          pb.addEventListener("click", function() { playSong(id, name); });
+          db.addEventListener("click", function() { delSong(id); });
+        })(s.id, s.name);
+        div.appendChild(info); div.appendChild(pb); div.appendChild(db);
+        el.appendChild(div);
+      });
+    });
+  }
+
+  function playSong(id, name) {
+    dbGet("songs", id, function(rec) {
+      if (!rec) { alert("Không tìm thấy bài!"); return; }
+      var blob = new Blob([rec.buf], {type: rec.mime||"audio/mpeg"});
+      var url  = URL.createObjectURL(blob);
+      var p    = document.getElementById("player");
+      p.src    = url;
+      p.classList.remove("hide");
+      p.play().catch(function(){});
+      document.getElementById("nowpl").classList.remove("hide");
+      document.getElementById("nowname").innerText = name;
+      document.querySelectorAll(".srow").forEach(function(r){ r.classList.remove("on"); });
+      var row = document.getElementById("r_" + id);
+      if (row) row.classList.add("on");
+    });
+  }
+
+  function delSong(id) {
+    if (!confirm("Xóa bài này?")) return;
+    dbDel("songs", id, function() {
+      var row = document.getElementById("r_" + id);
+      if (row && row.classList.contains("on")) {
+        var p = document.getElementById("player");
+        p.pause(); p.src = ""; p.classList.add("hide");
+        document.getElementById("nowpl").classList.add("hide");
+      }
+      renderSongs();
+    });
+  }
+
+  function setSt(msg, cls) {
+    var el = document.getElementById("stbar");
+    el.className = "stbar " + cls;
+    el.style.display = "block";
+    el.innerText = msg;
+    if (cls !== "st-ld") setTimeout(function(){ el.style.display="none"; }, 3000);
+  }
+
+  // ─────────────────────────────────────────
+  //  ADMIN
+  // ─────────────────────────────────────────
+  function renderAdmin() {
+    var tbody = document.getElementById("admtbl");
+    tbody.innerHTML = "<tr><td colspan='4' style='text-align:center;padding:10px;color:#aaa;'>⏳ Đang tải...</td></tr>";
+    fbGetAllAccounts(function(accs) {
+      tbody.innerHTML = "";
+      if (!accs.length) {
+        tbody.innerHTML = "<tr><td colspan='4' style='text-align:center;padding:10px;color:#aaa;'>Chưa có tài khoản</td></tr>";
+        return;
+      }
+      accs.forEach(function(a) {
+        var tr  = document.createElement("tr");
+        var td1 = document.createElement("td"); td1.style.padding = "7px"; td1.innerText = a.u;
+        var td2 = document.createElement("td"); td2.style.padding = "7px"; td2.innerText = a.p;
+        var td3 = document.createElement("td"); td3.style.padding = "7px"; td3.style.textAlign = "center";
+        var td4 = document.createElement("td"); td4.style.padding = "7px"; td4.style.textAlign = "center";
+
+        // Nút Ban/Unban
+        var banBtn = document.createElement("button");
+        banBtn.innerText = a.banned ? "Unban" : "Ban";
+        banBtn.style.cssText = "color:" + (a.banned ? "#2e7d32" : "#ff6600") + ";border:none;background:none;cursor:pointer;font-weight:bold;margin-right:4px;";
+        banBtn.addEventListener("click", function() {
+          var msg = a.banned ? "Unban tài khoản " + a.u + "?" : "Ban tài khoản " + a.u + "?";
+          if (!confirm(msg)) return;
+          fbBanAccount(a.u, !a.banned, renderAdmin);
+        });
+
+        // Nút Xóa
+        var delBtn = document.createElement("button");
+        delBtn.innerText = "Xóa";
+        delBtn.style.cssText = "color:red;border:none;background:none;cursor:pointer;font-weight:bold;";
+        delBtn.addEventListener("click", function() {
+          if (!confirm("Xóa tài khoản " + a.u + "?")) return;
+          fbDelAccount(a.u, renderAdmin);
+        });
+
+        // Status
+        var status = document.createElement("span");
+        status.innerText = a.banned ? "🔴" : "🟢";
+
+        td3.appendChild(banBtn);
+        td4.appendChild(delBtn);
+        tr.appendChild(td1); tr.appendChild(td2); tr.appendChild(td3); tr.appendChild(td4);
+        // Highlight row nếu bị ban
+        if (a.banned) tr.style.background = "#fff3f3";
+        tbody.appendChild(tr);
+      });
+    });
+  }
+
+  // ─────────────────────────────────────────
+  //  NAV / TABS
+  // ─────────────────────────────────────────
+  document.getElementById("goMusic").addEventListener("click", function() {
+    goTab("music");
+    renderSongs();
+  });
+  document.getElementById("n-home").addEventListener("click",    function() { goTab("home"); });
+  document.getElementById("n-weather").addEventListener("click", function() { goTab("weather"); });
+  document.getElementById("n-me").addEventListener("click",      function() { goTab("me"); });
+  document.getElementById("w-search-btn").addEventListener("click", fetchWeather);
+  document.getElementById("w-inp").addEventListener("keydown", function(e) {
+    if (e.key === "Enter") fetchWeather();
+  });
+  document.getElementById("backBtn").addEventListener("click", function() {
+    if (VIEW !== "home") goTab("home");
+  });
+
+  function goTab(t) {
+    ["home","music","me","weather"].forEach(function(x){
+      document.getElementById("v-"+x).classList.add("hide");
+    });
+    ["n-home","n-weather","n-me"].forEach(function(x){
+      document.getElementById(x).classList.remove("on");
+    });
+    document.getElementById("v-"+t).classList.remove("hide");
+    if (t === "home" || t === "music") document.getElementById("n-home").classList.add("on");
+    if (t === "weather") document.getElementById("n-weather").classList.add("on");
+    if (t === "me")      document.getElementById("n-me").classList.add("on");
+    VIEW = t;
+    var titles = {home:"Trang chủ", music:"Kho Nhạc", me:"Tôi", weather:"Thời Tiết"};
+    document.getElementById("htitle").innerText = titles[t] || "";
+  }
+
+  // weather nav + search events
+  document.getElementById("n-weather").addEventListener("click", function() { goTab("weather"); });
+  document.getElementById("w-search-btn").addEventListener("click", fetchWeather);
+  document.getElementById("w-inp").addEventListener("keydown", function(e) {
+    if (e.key === "Enter") fetchWeather();
+  });
+
+  openDB();
+}; // end window.onload
+
+// ─────────────────────────────────────────
+//  THỜI TIẾT — Open-Meteo (free, no key)
+//  Đặt NGOÀI window.onload để accessible
+// ─────────────────────────────────────────
+var W_CODES = {
+  0:"Trời quang",1:"Ít mây",2:"Mây rải rác",3:"Nhiều mây",
+  45:"Sương mù",48:"Sương giá",
+  51:"Mưa phùn nhẹ",53:"Mưa phùn",55:"Mưa phùn dày",
+  61:"Mưa nhẹ",63:"Mưa vừa",65:"Mưa to",
+  71:"Tuyết nhẹ",73:"Tuyết vừa",75:"Tuyết dày",
+  80:"Mưa rào nhẹ",81:"Mưa rào",82:"Mưa rào mạnh",
+  95:"Giông",96:"Giông có mưa đá",99:"Giông lớn"
+};
+var W_ICONS = {
+  0:"☀️",1:"🌤️",2:"⛅",3:"☁️",
+  45:"🌫️",48:"🌫️",
+  51:"🌦️",53:"🌦️",55:"🌧️",
+  61:"🌧️",63:"🌧️",65:"🌧️",
+  71:"🌨️",73:"🌨️",75:"❄️",
+  80:"🌦️",81:"🌧️",82:"⛈️",
+  95:"⛈️",96:"⛈️",99:"⛈️"
+};
+
+function fetchWeather() {
+  var city = document.getElementById("w-inp").value.trim();
+  if (!city) return;
+  var res = document.getElementById("w-result");
+  res.innerHTML = '<div class="w-loading">⏳ Đang tìm...</div>';
+
+  fetch("https://geocoding-api.open-meteo.com/v1/search?name=" + encodeURIComponent(city) + "&count=1&language=vi")
+    .then(function(r){ return r.json(); })
+    .then(function(geo) {
+      if (!geo.results || !geo.results.length) {
+        res.innerHTML = '<div class="w-err">❌ Không tìm thấy "<b>' + city + '</b>"</div>';
+        return;
+      }
+      var loc = geo.results[0];
+      var lat = loc.latitude; var lon = loc.longitude;
+      var name = loc.name + (loc.country ? ", " + loc.country : "");
+
+      return fetch("https://api.open-meteo.com/v1/forecast?latitude="+lat+"&longitude="+lon+
+        "&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,weathercode"+
+        "&wind_speed_unit=kmh&timezone=auto")
+        .then(function(r){ return r.json(); })
+        .then(function(data) {
+          var c    = data.current;
+          var code = c.weathercode;
+          var icon = W_ICONS[code] || "🌡️";
+          var desc = W_CODES[code] || "Không xác định";
+          res.innerHTML =
+            '<div class="w-main">' +
+              '<div class="w-icon">' + icon + '</div>' +
+              '<div class="w-temp">' + Math.round(c.temperature_2m) + '°C</div>' +
+              '<div class="w-desc">' + desc + '</div>' +
+              '<div class="w-city">📍 ' + name + '</div>' +
+            '</div>' +
+            '<div class="w-grid">' +
+              '<div class="w-item"><div class="w-item-icon">🌡️</div><div class="w-item-val">' + Math.round(c.apparent_temperature) + '°C</div><div class="w-item-lbl">Cảm giác như</div></div>' +
+              '<div class="w-item"><div class="w-item-icon">💧</div><div class="w-item-val">' + c.relative_humidity_2m + '%</div><div class="w-item-lbl">Độ ẩm</div></div>' +
+              '<div class="w-item" style="grid-column:span 2"><div class="w-item-icon">💨</div><div class="w-item-val">' + Math.round(c.wind_speed_10m) + ' km/h</div><div class="w-item-lbl">Tốc độ gió</div></div>' +
+            '</div>';
+        });
+    })
+    .catch(function() {
+      res.innerHTML = '<div class="w-err">❌ Lỗi kết nối, kiểm tra internet!</div>';
+    });
+}
+
+// ─────────────────────────────────────────
+//  UTILS
+// ─────────────────────────────────────────
+function esc(s) {
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+                  .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+}
+
+</script>
+</body>
+</html>
